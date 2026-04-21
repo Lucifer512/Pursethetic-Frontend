@@ -1,8 +1,20 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+
+# Pursethetic Ecommerce Web Application
+
+This is a modern ecommerce web application built with [Next.js](https://nextjs.org), TypeScript, Tailwind CSS, styled-components, and axios. It features a clean UI, product listing, and a scalable folder structure for rapid development.
 
 ## Getting Started
 
-First, run the development server:
+
+## Getting Started
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Run the development server:
 
 ```bash
 npm run dev
@@ -16,7 +28,31 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+
+Open [http://localhost:3000](http://localhost:3000) to view the app.
+
+## Project Structure
+
+- `src/components` – Reusable UI components (Navbar, ProductCard, etc.)
+- `src/pages` – App routes (products, cart, account, etc.)
+- `src/styles` – Global and component styles
+- `src/features` – Feature-specific logic (cart, user, etc.)
+- `src/data` – Static or mock data
+- `src/hooks` – Custom React hooks
+- `src/lib` – Utility libraries
+
+## Features
+
+- Modern, clean UI with Tailwind CSS and styled-components
+- Product listing and detail pages
+- Shopping cart basics
+- Ready for API integration with axios
+
+## Customization
+
+Replace placeholder images in `/public/images` with your own product images.
+
+## Learn More
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 

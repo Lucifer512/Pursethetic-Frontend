@@ -1,0 +1,5 @@
+- [x] Project scaffolded with Next.js, TypeScript, Tailwind CSS, ESLint, App Router, src directory, and import alias.
+- [ ] Install styled-components and axios.
+- [ ] Add basic folder structure for ecommerce (pages, components, styles).
+- [ ] Scaffold modern, clean UI template for ecommerce.
+- [ ] Update README.md with project info and instructions.

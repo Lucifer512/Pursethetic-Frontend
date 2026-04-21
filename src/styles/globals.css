@@ -1,0 +1,25 @@
+
+@import "tailwindcss/preflight";
+@tailwind utilities;
+
+:root {
+  --color-primary: #2563eb;
+  --color-secondary: #f59e42;
+  --color-accent: #10b981;
+  --color-background: #f9fafb;
+  --color-surface: #ffffff;
+  --color-border: #e5e7eb;
+  --color-text: #1f2937;
+  --color-muted: #6b7280;
+  --color-error: #ef4444;
+  --color-success: #22c55e;
+  --color-warning: #facc15;
+  --border-radius-xl: 0.75rem;
+  --box-shadow-card: 0 4px 24px 0 rgba(34, 34, 87, 0.08);
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--color-background);
+  color: var(--color-text);
+}
