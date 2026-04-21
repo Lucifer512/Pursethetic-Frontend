@@ -1,10 +1,6 @@
-
 # Pursethetic Ecommerce Web Application
 
 This is a modern ecommerce web application built with [Next.js](https://nextjs.org), TypeScript, Tailwind CSS, styled-components, and axios. It features a clean UI, product listing, and a scalable folder structure for rapid development.
-
-## Getting Started
-
 
 ## Getting Started
 
@@ -25,9 +21,6 @@ pnpm dev
 # or
 bun dev
 ```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
 
 Open [http://localhost:3000](http://localhost:3000) to view the app.
 
