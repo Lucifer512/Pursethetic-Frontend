@@ -1,49 +1,36 @@
-import Navbar from '../components/Navbar';
-import ProductCard from '../components/ProductCard';
-
-const products = [
-  { name: 'Classic Purse', price: 59.99, image: '/images/purse1.jpg' },
-  { name: 'Modern Tote', price: 79.99, image: '/images/purse2.jpg' },
-  { name: 'Elegant Clutch', price: 39.99, image: '/images/purse3.jpg' },
-];
+import ProductGallery from "../components/ProductGallery";
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navbar />
-      <main className="max-w-6xl mx-auto py-10 px-4">
-        <h1 className="text-3xl font-bold mb-8 text-center">Featured Products</h1>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-          {products.map((product) => (
-            <ProductCard key={product.name} {...product} />
-          ))}
+    <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-8 py-12">
+      {/* Hero Section */}
+      <section id="hero" className="text-center mb-14">
+        <h1 className="headline-text text-4xl sm:text-5xl font-extrabold mb-4 tracking-tight drop-shadow-lg">Premium, Minimalist Handbags</h1>
+        <p className="muted-text text-lg sm:text-xl max-w-2xl mx-auto mb-8">Discover the new standard for the modern muse. Effortless style, curated quality, and timeless design—crafted for you.</p>
+        <a href="#products" className="button-text inline-block bg-primary px-8 py-3 rounded-xl font-semibold shadow hover:bg-accent transition-transform hover:scale-105">Shop Now</a>
+      </section>
+
+      {/* Features Section */}
+      <section className="flex flex-col md:flex-row justify-center gap-8 mb-16">
+        <div className="flex-1 bg-surface rounded-xl shadow-card p-6 flex flex-col items-center border border-border">
+          <span className="text-3xl mb-2">🚚</span>
+          <h3 className="font-bold text-lg mb-1">Nationwide Shipping</h3>
+          <p className="muted-text text-center">Fast, reliable delivery across Pakistan. Free shipping on orders over Rs. 4,000.</p>
         </div>
-      </main>
-    </div>
-  );
-}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+        <div className="flex-1 bg-surface rounded-xl shadow-card p-6 flex flex-col items-center border border-border">
+          <span className="text-3xl mb-2">💳</span>
+          <h3 className="font-bold text-lg mb-1">Cash on Delivery</h3>
+          <p className="muted-text text-center">Secure doorstep payment for a worry-free shopping experience.</p>
         </div>
-      </main>
-    </div>
+        <div className="flex-1 bg-surface rounded-xl shadow-card p-6 flex flex-col items-center border border-border">
+          <span className="text-3xl mb-2">🔄</span>
+          <h3 className="font-bold text-lg mb-1">Easy Exchanges</h3>
+          <p className="muted-text text-center">7-day seamless exchange policy for your peace of mind.</p>
+        </div>
+      </section>
+
+      {/* Product Gallery */}
+      <ProductGallery />
+    </main>
   );
 }

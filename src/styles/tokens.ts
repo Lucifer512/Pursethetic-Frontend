@@ -1,0 +1,30 @@
+export const BRAND = {
+  background: "#f9f8f4",
+  foreground: "#2d2d2d",
+  primary: "#c5a059",
+  primaryHover: "#b08f49",
+  accent: "#d4b16b",
+  surface: "#ffffff",
+  border: "#ece9df",
+  muted: "#6b7280",
+  subtleText: "#b1a89c",
+  overlaySoft: "rgba(249,248,244,0.85)",
+  success: "#22c55e",
+  error: "#ef4444",
+  radiusXl: "0.75rem",
+  shadowCard: "0 4px 24px 0 rgba(34, 34, 87, 0.08)",
+} as const;
+
+export const BRAND_CSS_VARIABLES = {
+  "--background": BRAND.background,
+  "--foreground": BRAND.foreground,
+  "--color-primary": BRAND.primary,
+  "--color-primary-hover": BRAND.primaryHover,
+  "--color-accent": BRAND.accent,
+  "--color-surface": BRAND.surface,
+  "--color-border": BRAND.border,
+  "--color-muted": BRAND.muted,
+  "--color-text-strong": BRAND.foreground,
+  "--radius-xl": BRAND.radiusXl,
+  "--shadow-card": BRAND.shadowCard,
+} as const;
