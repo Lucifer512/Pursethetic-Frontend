@@ -20,7 +20,7 @@ export default function Header() {
   const activeLinkClass = "inline-flex h-10 items-center text-primary font-semibold";
 
   return (
-    <header className="w-full bg-background border-b border-border sticky top-0 z-40">
+    <header className="w-full bg-background border-b border-border sticky top-0 z-40" suppressHydrationWarning>
       <div className="max-w-7xl mx-auto flex min-h-18 items-center justify-between gap-4 px-4 sm:px-6">
         <Link href="/" className="inline-flex h-10 items-center font-serif text-2xl font-bold tracking-tight" style={{ fontFamily: 'Playfair Display, serif' }}>
           Pursethetic

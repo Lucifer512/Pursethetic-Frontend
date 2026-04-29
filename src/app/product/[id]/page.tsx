@@ -19,12 +19,6 @@ export default function ProductDetailPage() {
   const [snackbar, setSnackbar] = useState(false);
   const [showCheck, setShowCheck] = useState(false);
 
-  React.useEffect(() => {
-    if (product?.images[0]) {
-      setMainImg(product.images[0]);
-    }
-  }, [product]);
-
   // Mobile sticky bar logic
   const [showMobileBar, setShowMobileBar] = useState(false);
   React.useEffect(() => {
@@ -102,8 +96,8 @@ export default function ProductDetailPage() {
       </div>
       {/* Right: Product Info */}
       <div className="lg:w-1/2 w-full flex flex-col gap-8">
-        <h1 className="font-serif text-4xl md:text-5xl font-bold mb-2 text-foreground">{product.name}</h1>
-        <div className="text-2xl font-semibold mb-4" style={{ color: BRAND.subtleText }}>Rs. {product.price.toLocaleString()} PKR</div>
+        <h1 className="font-serif text-4xl md:text-5xl font-bold mb-2 text-foreground headline-text">{product.name}</h1>
+        <div className="text-2xl font-serif font-semibold mb-4 text-primary">Rs. {product.price.toLocaleString()} PKR</div>
         <Button
           variant="contained"
           color="primary"
@@ -168,7 +162,7 @@ export default function ProductDetailPage() {
             exit={{ y: 80, opacity: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <div className="font-serif text-lg font-bold">Rs. {product.price.toLocaleString()} PKR</div>
+            <div className="font-serif text-lg font-bold text-primary">Rs. {product.price.toLocaleString()} PKR</div>
             <Button
               variant="contained"
               color="primary"

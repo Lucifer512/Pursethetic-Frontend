@@ -16,7 +16,7 @@ type ProductCardProps = {
 export default function ProductCard({ id, name, price, image, secondaryImage, url, description }: ProductCardProps) {
   const [hovered, setHovered] = useState(false);
   return (
-    <Link href={`/product/${encodeURIComponent(id)}`} prefetch passHref legacyBehavior>
+    <Link href={`/product/${encodeURIComponent(id)}`} prefetch>
       <motion.div
         className="group bg-surface rounded-xl shadow-card p-5 border border-border hover:shadow-lg transition flex flex-col items-center text-center min-h-85 cursor-pointer"
         style={{ textDecoration: 'none' }}
@@ -45,8 +45,8 @@ export default function ProductCard({ id, name, price, image, secondaryImage, ur
             />
           )}
         </div>
-        <h3 className="product-name-text text-lg font-semibold mb-1 group-hover:opacity-80 transition">{name}</h3>
-        <p className="product-price-text font-bold mb-2">Rs. {price.toLocaleString()} PKR</p>
+        <h3 className="product-name-text font-serif text-lg font-semibold mb-1 group-hover:opacity-80 transition">{name}</h3>
+        <p className="product-price-text font-serif font-bold mb-2">Rs. {price.toLocaleString()} PKR</p>
         {description && (
           <p className="product-desc-text text-sm mb-3 line-clamp-2">{description}</p>
         )}

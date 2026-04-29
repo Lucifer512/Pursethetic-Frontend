@@ -55,7 +55,7 @@ export default function CartSidebar() {
           {cart.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full py-16">
               <p className="text-gray-500 text-lg mb-6">Your bag is empty</p>
-              <Link href="/collection" passHref legacyBehavior>
+              <Link href="/collection">
                 <Button
                   variant="outlined"
                   color="primary"
