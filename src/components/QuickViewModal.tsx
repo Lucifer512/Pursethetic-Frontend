@@ -2,9 +2,10 @@
 import React from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
-import Button from "@mui/material/Button";
+import Image from "next/image";
 import { useShop } from "../context/ShopContext";
 import { BRAND } from "../styles/tokens";
+import Button from "./ui/Button";
 
 type Product = {
   id: string;
@@ -25,13 +26,13 @@ export default function QuickViewModal({ open, product, onClose }: QuickViewModa
   return (
     <Dialog open={open} onClose={onClose} slotProps={{ paper: { sx: { borderRadius: 0, bgcolor: BRAND.surface, minWidth: 340 } }, backdrop: { sx: { bgcolor: BRAND.overlaySoft } } }}>
       <DialogContent className="flex flex-col items-center p-8">
-        <img src={product.image} alt={product.name} className="w-48 h-48 object-cover mb-4 rounded" />
+        <Image src={product.image} alt={product.name} width={240} height={240} className="w-48 h-48 object-cover mb-4 rounded" />
         <h3 className="product-name-text text-xl font-serif font-semibold mb-2">{product.name}</h3>
         <p className="product-price-text font-bold mb-4">Rs. {product.price.toLocaleString()} PKR</p>
-        <Button variant="contained" color="primary" fullWidth sx={{ mb: 2 }} onClick={() => { addToCart(product); onClose(); }}>
+        <Button variant="primary" className="w-full mb-2" onClick={() => { addToCart(product); onClose(); }}>
           Add to Cart
         </Button>
-        <Button variant="outlined" color="primary" fullWidth onClick={onClose}>
+        <Button variant="secondary" className="w-full" onClick={onClose}>
           Close
         </Button>
       </DialogContent>

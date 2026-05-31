@@ -1,22 +1,46 @@
 import type { Metadata } from "next";
 import type { CSSProperties } from "react";
 import "./globals.css";
-import Providers from "../providers/Providers";
 import ClientLayout from "../providers/ClientLayout";
+import Providers from "../providers/Providers";
 import { BRAND_CSS_VARIABLES } from "../styles/tokens";
+import ClientOnly from "../providers/ClientOnly";
 
 export const metadata: Metadata = {
-  title: "Pursethetic",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.pursethetic.com"),
+  title: {
+    default: "Pursethetic",
+    template: "%s | Pursethetic",
+  },
   description: "Premium minimalist handbags",
+  openGraph: {
+    type: "website",
+    siteName: "Pursethetic",
+    title: "Pursethetic",
+    description: "Premium minimalist handbags",
+    images: ["/banner-1.jpg"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Pursethetic",
+    description: "Premium minimalist handbags",
+    images: ["/banner-1.jpg"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="h-full antialiased" style={BRAND_CSS_VARIABLES as CSSProperties} suppressHydrationWarning>
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
-        <Providers>
+          <ClientOnly>
+            <Providers>
           <ClientLayout>{children}</ClientLayout>
-        </Providers>
+            </Providers>
+          </ClientOnly>
       </body>
     </html>
   );

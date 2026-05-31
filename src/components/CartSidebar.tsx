@@ -1,15 +1,14 @@
 "use client";
 import React from "react";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
-import Button from "@mui/material/Button";
-import IconButton from "@mui/material/IconButton";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
-import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useShop } from "../context/ShopContext";
 import { AnimatePresence, motion } from "framer-motion";
 import { BRAND } from "../styles/tokens";
+import Button from "./ui/Button";
 
 const FREE_SHIPPING_THRESHOLD = 4000;
 
@@ -55,16 +54,16 @@ export default function CartSidebar() {
           {cart.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full py-16">
               <p className="text-gray-500 text-lg mb-6">Your bag is empty</p>
-              <Link href="/collection">
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  sx={{ borderColor: BRAND.primary, color: BRAND.primary, fontWeight: 500, px: 4, py: 1.5, textTransform: "none" }}
-                  onClick={closeSidebar}
-                >
-                  Start Shopping
-                </Button>
-              </Link>
+              <Button
+                variant="secondary"
+                className="px-5"
+                onClick={() => {
+                  closeSidebar();
+                  router.push("/collection");
+                }}
+              >
+                Start Shopping
+              </Button>
             </div>
           ) : (
             <AnimatePresence initial={false}>
@@ -77,9 +76,11 @@ export default function CartSidebar() {
                   exit={{ opacity: 0, y: -24 }}
                   transition={{ duration: 0.5, ease: [0.04, 0.62, 0.23, 0.98] }}
                 >
-                  <img
-                    src={item.image}
+                  <Image
+                      src={item.image ?? "/banner-1.jpg"}
                     alt={item.name}
+                    width={56}
+                    height={56}
                     className="w-14 h-14 object-cover rounded-lg border border-border bg-surface"
                   />
                   <div className="flex-1 min-w-0">
@@ -87,13 +88,13 @@ export default function CartSidebar() {
                     <div className="text-sm" style={{ color: BRAND.subtleText }}>Rs. {item.price.toLocaleString()} PKR</div>
                   </div>
                   <div className="flex items-center gap-1">
-                    <IconButton size="small" onClick={() => removeFromCart(item.id)} sx={{ borderRadius: 1, color: BRAND.primary }}>
+                    <Button variant="ghost" size="sm" aria-label={`Decrease ${item.name}`} onClick={() => removeFromCart(item.id)} className="h-9 w-9 rounded-full p-0 text-primary">
                       <RemoveIcon fontSize="small" />
-                    </IconButton>
+                    </Button>
                     <span className="font-semibold text-base px-2 select-none">{item.quantity}</span>
-                    <IconButton size="small" onClick={() => addToCart({ ...item, quantity: 1 })} sx={{ borderRadius: 1, color: BRAND.primary }}>
+                      <Button variant="ghost" size="sm" aria-label={`Increase ${item.name}`} onClick={() => addToCart({ id: item.id, name: item.name, price: item.price, image: item.image ?? "/banner-1.jpg" })} className="h-9 w-9 rounded-full p-0 text-primary">
                       <AddIcon fontSize="small" />
-                    </IconButton>
+                    </Button>
                   </div>
                 </motion.div>
               ))}
@@ -107,10 +108,10 @@ export default function CartSidebar() {
               <span>Subtotal:</span>
               <span>Rs. {subtotal.toLocaleString()} PKR</span>
             </div>
-            <Button variant="contained" color="primary" fullWidth sx={{ fontWeight: 600, fontSize: 18, py: 1.5, boxShadow: 'none' }} onClick={handleCheckout}>
+            <Button variant="primary" size="lg" className="w-full" onClick={handleCheckout}>
               Checkout
             </Button>
-            <Button variant="outlined" color="primary" fullWidth sx={{ mt: 2, fontWeight: 500, py: 1.5 }} onClick={clearCart}>
+            <Button variant="secondary" className="w-full mt-3" onClick={clearCart}>
               Clear Bag
             </Button>
           </div>

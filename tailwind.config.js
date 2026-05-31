@@ -10,14 +10,14 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: '#c5a059',
-        secondary: '#d4b16b',
-        accent: '#b08f49',
-        background: '#f9f8f4',
-        surface: '#ffffff',
-        border: '#ece9df',
-        text: '#2d2d2d',
-        muted: '#6b7280', // gray-500
+        primary: '#9b7a43',
+        secondary: '#c4a269',
+        accent: '#816437',
+        background: '#f6f1e8',
+        surface: '#fffaf1',
+        border: '#e8dcc7',
+        text: '#201a15',
+        muted: '#6f6254', // warm neutral
         error: '#ef4444', // red-500
         success: '#22c55e', // green-500
         warning: '#f59e42', // orange-400

@@ -1,174 +1,104 @@
-"use client";
-import React, { useState, useMemo } from "react";
-import ProductCard from "../../components/ProductCard";
-import { Menu, MenuItem, Button, Skeleton } from "@mui/material";
-import { motion } from "framer-motion";
-import { useShop } from "../../context/ShopContext";
-import { products, type Product } from "../../data/products";
-import { BRAND } from "../../styles/tokens";
+import type { Metadata } from "next";
+import CollectionPageClient from "../../components/CollectionPageClient";
+import BreadcrumbsNav from "../../components/BreadcrumbsNav";
+import { products } from "../../data/products";
 
-const sortOptions = ["Featured", "Price: Low to High", "Price: High to Low"];
+type Props = {
+  searchParams: Promise<{ category?: string; sort?: string }>;
+};
 
-export default function CollectionPage() {
-  const { addToCart } = useShop();
-  const allProducts = products;
-  const categories = ["All", ...Array.from(new Set(allProducts.map((product) => product.category)))];
-  const [category, setCategory] = useState("All");
-  const [sort, setSort] = useState("Featured");
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [showCount, setShowCount] = useState(8);
-  const [loading, setLoading] = useState(false);
-  const [quickAddedId, setQuickAddedId] = useState<string | null>(null);
+const categoryDescriptionMap: Record<string, string> = {
+  Hobo: "Relaxed hobo silhouettes for refined everyday style.",
+  Tote: "Structured totes with elegant capacity and clean lines.",
+  Shoulder: "Premium shoulder bags with elevated proportions.",
+  Mini: "Compact mini bags designed for statement styling.",
+};
 
-  // Filtering
-  const filtered = useMemo(() => {
-    let items = allProducts;
-    if (category !== "All") items = items.filter((p) => p.category === category);
-    if (sort === "Price: Low to High") items = [...items].sort((a, b) => a.price - b.price);
-    if (sort === "Price: High to Low") items = [...items].sort((a, b) => b.price - a.price);
-    return items;
-  }, [category, sort]);
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.pursethetic.com";
 
-  // Load More
-  const handleLoadMore = async () => {
-    setLoading(true);
-    setTimeout(() => {
-      setShowCount((c) => c + 8);
-      setLoading(false);
-    }, 1200);
+function absoluteUrl(pathname: string) {
+  return new URL(pathname, siteUrl).toString();
+}
+
+function getSelectedCategory(category?: string) {
+  if (!category || category === "All") {
+    return "All";
+  }
+
+  return products.some((product) => product.category === category) ? category : "All";
+}
+
+function getCollectionSeo(selectedCategory: string) {
+  const categoryCount = selectedCategory === "All" ? products.length : products.filter((product) => product.category === selectedCategory).length;
+  const title = selectedCategory === "All" ? "Premium Collection" : `${selectedCategory} Bags`;
+  const description =
+    selectedCategory === "All"
+      ? "Browse the full Pursethetic collection of premium minimalist handbags, curated for everyday polish and timeless style."
+      : `${selectedCategory} handbags from Pursethetic, curated for ${categoryCount} premium styles.`;
+
+  return { categoryCount, title, description };
+}
+
+export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
+  const { category } = await searchParams;
+  const selectedCategory = getSelectedCategory(category);
+  const { categoryCount, title, description } = getCollectionSeo(selectedCategory);
+  const canonicalPath = selectedCategory === "All" ? "/collection" : `/collection?category=${encodeURIComponent(selectedCategory)}`;
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: absoluteUrl(canonicalPath),
+    },
+    openGraph: {
+      title,
+      description,
+      type: "website",
+      url: absoluteUrl(canonicalPath),
+      images: ["/banner-2.jpg"],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ["/banner-2.jpg"],
+    },
+    keywords:
+      selectedCategory === "All"
+        ? ["Pursethetic", "handbags", "collection", "minimalist handbags", "designer bags"]
+        : ["Pursethetic", selectedCategory, `${selectedCategory.toLowerCase()} bags`, "handbags", "collection"],
+    other: {
+      "collection:item-count": String(categoryCount),
+    },
   };
+}
 
-  const handleQuickAdd = (product: Product) => {
-    addToCart({ id: product.id, name: product.name, price: product.price, image: product.image });
-    setQuickAddedId(product.id);
-    setTimeout(() => setQuickAddedId((id) => (id === product.id ? null : id)), 1200);
-  };
+export default async function CollectionPage({ searchParams }: Props) {
+  const { category } = await searchParams;
+  const selectedCategory = getSelectedCategory(category);
+  const breadcrumbItems = [
+    { label: "Home", href: "/" },
+    { label: "Collection", href: "/collection" },
+    ...(selectedCategory !== "All" ? [{ label: selectedCategory, href: `/collection?category=${encodeURIComponent(selectedCategory)}` }] : []),
+  ];
 
   return (
-    <div className="min-h-screen bg-background w-full px-4 sm:px-8 py-16">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-10 gap-6">
-        {/* Categories */}
-        <div className="flex gap-4 flex-wrap justify-center md:justify-start">
-          {categories.map((cat) => (
-            <Button
-              key={cat}
-              variant={cat === category ? "contained" : "outlined"}
-              onClick={() => setCategory(cat)}
-              sx={{
-                bgcolor: cat === category ? BRAND.primary : BRAND.surface,
-                color: cat === category ? BRAND.surface : BRAND.foreground,
-                borderColor: BRAND.primary,
-                fontWeight: 500,
-                px: 2.5,
-                py: 1,
-                textTransform: "none",
-                boxShadow: "none",
-                '&:hover': { bgcolor: cat === category ? BRAND.primaryHover : BRAND.border },
-              }}
-            >
-              {cat}
-            </Button>
-          ))}
-        </div>
-        {/* Sort Menu */}
-        <div>
-          <Button
-            variant="outlined"
-            onClick={(e) => setAnchorEl(e.currentTarget)}
-            sx={{ borderColor: BRAND.primary, color: BRAND.foreground, fontWeight: 500, textTransform: "none" }}
-          >
-            Sort: {sort}
-          </Button>
-          <Menu anchorEl={anchorEl} open={!!anchorEl} onClose={() => setAnchorEl(null)}>
-            {sortOptions.map((option) => (
-              <MenuItem
-                key={option}
-                selected={option === sort}
-                onClick={() => { setSort(option); setAnchorEl(null); }}
-              >
-                {option}
-              </MenuItem>
-            ))}
-          </Menu>
-        </div>
-      </div>
-      {/* Product Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-12">
-        {filtered.slice(0, showCount).map((p) => (
-          <motion.div
-            key={p.id}
-            className="flex flex-col items-center"
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.8, ease: [0.04, 0.62, 0.23, 0.98] }}
-          >
-            <div className="w-full max-w-xs">
-              <ProductCard {...p} />
-              <Button
-                variant="outlined"
-                fullWidth
-                sx={{
-                  mt: 2,
-                  borderColor: BRAND.primary,
-                  color: quickAddedId === p.id ? BRAND.surface : BRAND.primary,
-                  bgcolor: quickAddedId === p.id ? BRAND.primary : "transparent",
-                  fontWeight: 600,
-                  textTransform: "none",
-                  '&:hover': {
-                    borderColor: BRAND.primaryHover,
-                    bgcolor: quickAddedId === p.id ? BRAND.primaryHover : BRAND.border,
-                  },
-                }}
-                onClick={() => handleQuickAdd(p)}
-              >
-                {quickAddedId === p.id ? "Added" : "Quick Add"}
-              </Button>
-            </div>
-          </motion.div>
-        ))}
-        {/* Skeletons for loading */}
-        {loading && Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="flex flex-col items-center">
-            <Skeleton variant="rectangular" width={180} height={180} sx={{ bgcolor: BRAND.border, borderRadius: 3, mb: 2 }} />
-            <Skeleton width={120} height={24} sx={{ bgcolor: BRAND.border, mb: 1 }} />
-            <Skeleton width={80} height={20} sx={{ bgcolor: BRAND.border }} />
-          </div>
-        ))}
-      </div>
-      {/* Load More Button */}
-      {showCount < filtered.length && (
-        <div className="flex justify-center mt-12">
-          <Button
-            variant="outlined"
-            onClick={handleLoadMore}
-            sx={{
-              borderColor: BRAND.primary,
-              color: BRAND.primary,
-              fontWeight: 500,
-              px: 6,
-              py: 1.5,
-              textTransform: "none",
-              fontSize: 18,
-              position: 'relative',
-              overflow: 'hidden',
-            }}
-            disabled={loading}
-          >
-            {loading ? (
-              <Skeleton width={80} height={24} sx={{ bgcolor: BRAND.border }} />
-            ) : (
-              <motion.span
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.8, ease: [0.04, 0.62, 0.23, 0.98] }}
-              >
-                Load More
-              </motion.span>
-            )}
-          </Button>
-        </div>
-      )}
-    </div>
+    <>
+      <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-8 py-12">
+        <BreadcrumbsNav items={breadcrumbItems} />
+        <section id="hero" className="text-center mb-14">
+          <h1 className="headline-text text-4xl sm:text-5xl font-extrabold mb-4 tracking-tight drop-shadow-lg">
+            {selectedCategory === "All" ? "Premium Collection" : `${selectedCategory} Bags`}
+          </h1>
+          <p className="muted-text text-lg sm:text-xl max-w-2xl mx-auto mb-8">
+            {selectedCategory !== "All"
+              ? categoryDescriptionMap[selectedCategory] ?? `Curated ${selectedCategory.toLowerCase()} handbags crafted for a premium feel.`
+              : "Discover the new standard for the modern muse. Effortless style, curated quality, and timeless design—crafted for you."}
+          </p>
+        </section>
+        <CollectionPageClient initialCategory={selectedCategory} />
+      </main>
+    </>
   );
 }

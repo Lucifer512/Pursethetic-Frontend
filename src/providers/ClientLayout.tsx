@@ -1,17 +1,21 @@
 "use client";
 
-import dynamic from "next/dynamic";
-import React from "react";
-
-const Header = dynamic(() => import("../components/Header"), { ssr: false });
-const CartSidebar = dynamic(() => import("../components/CartSidebar"), { ssr: false });
+import Header from "../components/Header";
+import CartSidebar from "../components/CartSidebar";
+import ClientOnly from "./ClientOnly";
+import PageTransition from "../components/PageTransition";
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <Header />
-      {children}
-      <CartSidebar />
+      <ClientOnly>
+        <Header />
+      </ClientOnly>
+      <PageTransition>{children}</PageTransition>
+      <ClientOnly>
+        <CartSidebar />
+      </ClientOnly>
     </>
   );
 }
+

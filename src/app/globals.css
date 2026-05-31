@@ -18,11 +18,21 @@
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  background: var(--background);
+  background-color: var(--background);
+  background-image:
+    radial-gradient(circle at top left, rgba(196, 162, 105, 0.12), transparent 38%),
+    radial-gradient(circle at top right, rgba(155, 122, 67, 0.08), transparent 30%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.72), transparent 28%);
   color: var(--foreground);
   font-family: var(--font-sans);
   line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 h1, h2, h3, .font-serif, .headline-text {
@@ -63,3 +73,8 @@ img {
 .product-desc-text { color: var(--color-muted); }
 .button-text { color: var(--color-text-strong); }
 .muted-text { color: var(--color-muted); }
+
+::selection {
+  background: rgba(155, 122, 67, 0.18);
+  color: var(--foreground);
+}

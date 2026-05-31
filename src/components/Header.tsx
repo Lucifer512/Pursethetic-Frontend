@@ -3,12 +3,12 @@ import React, { useState } from "react";
 import Link from "next/link";
 import MenuIcon from "@mui/icons-material/Menu";
 import Drawer from "@mui/material/Drawer";
-import IconButton from "@mui/material/IconButton";
 import { useShop } from "../context/ShopContext";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import CloseIcon from "@mui/icons-material/Close";
 import { usePathname } from "next/navigation";
 import { BRAND } from "../styles/tokens";
+import Button from "./ui/Button";
 
 export default function Header() {
   const { openSidebar } = useShop();
@@ -28,25 +28,25 @@ export default function Header() {
         <nav className="hidden md:flex items-center gap-5 text-base font-medium">
           <Link href="/" className={pathname === "/" ? activeLinkClass : linkClass}>Home</Link>
           <Link href="/collection" className={pathname === "/collection" ? activeLinkClass : linkClass}>Collection</Link>
-          <IconButton aria-label="cart" onClick={openSidebar} sx={{ color: BRAND.primary, ml: 0.5 }}>
+          <Button aria-label="cart" onClick={openSidebar} variant="ghost" size="sm" className="h-10 w-10 rounded-full p-0 text-primary ml-0.5">
             <ShoppingBagIcon fontSize="inherit" />
-          </IconButton>
+          </Button>
         </nav>
         <div className="md:hidden flex items-center gap-1">
-          <IconButton aria-label="cart" onClick={openSidebar} sx={{ color: BRAND.primary }}>
+          <Button aria-label="cart" onClick={openSidebar} variant="ghost" size="sm" className="h-10 w-10 rounded-full p-0 text-primary">
             <ShoppingBagIcon fontSize="inherit" />
-          </IconButton>
-          <IconButton aria-label="menu" onClick={() => setMenuOpen(true)}>
+          </Button>
+          <Button aria-label="menu" onClick={() => setMenuOpen(true)} variant="ghost" size="sm" className="h-10 w-10 rounded-full p-0">
             <MenuIcon fontSize="inherit" />
-          </IconButton>
+          </Button>
         </div>
       </div>
       <Drawer anchor="right" open={isMenuOpen} onClose={closeMenu} slotProps={{ paper: { sx: { borderRadius: 0, minWidth: 260, bgcolor: BRAND.background } } }}>
         <div className="flex items-center justify-between px-6 py-4 border-b border-border">
           <span className="font-serif text-lg font-semibold">Menu</span>
-          <IconButton aria-label="close menu" onClick={closeMenu}>
+          <Button aria-label="close menu" onClick={closeMenu} variant="ghost" size="sm" className="h-10 w-10 rounded-full p-0">
             <CloseIcon fontSize="small" />
-          </IconButton>
+          </Button>
         </div>
         <div className="flex flex-col gap-6 p-6 text-lg">
           <Link href="/" onClick={closeMenu}>Home</Link>

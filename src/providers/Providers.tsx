@@ -61,7 +61,7 @@ const muiTheme = createTheme({
           textTransform: 'none',
           border: `1px solid ${BRAND.border}`,
         },
-        containedPrimary: {
+        contained: {
           backgroundColor: BRAND.primary,
           color: BRAND.foreground,
           '&:hover': { backgroundColor: BRAND.primaryHover },
