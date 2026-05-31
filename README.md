@@ -1,6 +1,6 @@
 # Pursethetic Ecommerce Web Application
 
-This is a modern ecommerce web application built with [Next.js](https://nextjs.org), TypeScript, Tailwind CSS, styled-components, and axios. It features a clean UI, product listing, and a scalable folder structure for rapid development.
+This is a modern ecommerce web application built with [Next.js](https://nextjs.org), TypeScript, Tailwind CSS, styled-components, and axios. It features a premium editorial homepage, product pages, trust pages, and a scalable folder structure for rapid development.
 
 ## Getting Started
 
@@ -27,7 +27,10 @@ Open [http://localhost:3000](http://localhost:3000) to view the app.
 ## Project Structure
 
 - `src/components` – Reusable UI components (Navbar, ProductCard, etc.)
-- `src/pages` – App routes (products, cart, account, etc.)
+- `src/app` – App routes (homepage, products, about, contact, policies, checkout, etc.)
+- `src/app/about` – About Us page
+- `src/app/contact` – Contact Us page
+- `src/app/policies` – Privacy, refund, shipping, terms, and contact policy pages
 - `src/styles` – Global and component styles
 - `src/features` – Feature-specific logic (cart, user, etc.)
 - `src/data` – Static or mock data
@@ -38,6 +41,8 @@ Open [http://localhost:3000](http://localhost:3000) to view the app.
 
 - Modern, clean UI with Tailwind CSS and styled-components
 - Product listing and detail pages
+- Editorial homepage with interactive product and category sections
+- About, contact, and policy pages that support trust and SEO
 - Shopping cart basics
 - Ready for API integration with axios
 

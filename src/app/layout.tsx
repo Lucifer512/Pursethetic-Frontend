@@ -12,18 +12,18 @@ export const metadata: Metadata = {
     default: "Pursethetic",
     template: "%s | Pursethetic",
   },
-  description: "Premium minimalist handbags",
+  description: "Premium handbags and editorial ecommerce pages for Pursethetic.",
   openGraph: {
     type: "website",
     siteName: "Pursethetic",
     title: "Pursethetic",
-    description: "Premium minimalist handbags",
+    description: "Premium handbags and editorial ecommerce pages for Pursethetic.",
     images: ["/banner-1.jpg"],
   },
   twitter: {
     card: "summary_large_image",
     title: "Pursethetic",
-    description: "Premium minimalist handbags",
+    description: "Premium handbags and editorial ecommerce pages for Pursethetic.",
     images: ["/banner-1.jpg"],
   },
   robots: {

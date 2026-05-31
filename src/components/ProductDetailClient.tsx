@@ -68,13 +68,18 @@ export default function ProductDetailClient({ product }: Props) {
     setTimeout(() => setShowCheck(false), 1200);
   };
 
+  const handleCheckoutNow = () => {
+    addToCart({ id: product.id, name: product.name, price: product.price, image: product.images[0] });
+    window.location.href = "/checkout";
+  };
+
   const closeLightbox = () => setLightboxOpen(false);
   const goPrev = () => setLightboxIndex((current) => (current - 1 + product.images.length) % product.images.length);
   const goNext = () => setLightboxIndex((current) => (current + 1) % product.images.length);
 
   return (
-    <div className="min-h-screen bg-background w-full px-4 sm:px-8 py-12 flex flex-col lg:flex-row gap-12 max-w-7xl mx-auto">
-      <div className="lg:w-1/2 w-full lg:sticky top-24 self-start">
+    <div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-12 bg-background px-4 py-12 sm:px-8 lg:flex-row">
+      <div className="w-full self-start lg:sticky lg:top-24 lg:w-1/2">
         <div className="flex gap-6">
           <div className="flex flex-col gap-3">
             {product.images.map((img, i) => (
@@ -82,7 +87,7 @@ export default function ProductDetailClient({ product }: Props) {
                 key={img}
                 type="button"
                 aria-label={`${product.name} thumbnail ${i + 1}`}
-                className={`w-16 h-16 overflow-hidden rounded-lg border cursor-pointer transition ${mainImg === img ? "border-primary" : "border-transparent hover:border-border"}`}
+                className={`h-16 w-16 overflow-hidden rounded-lg border transition ${mainImg === img ? "border-primary ring-2 ring-[rgba(155,122,67,0.12)]" : "border-transparent hover:border-[rgba(155,122,67,0.3)]"}`}
                 onClick={() => {
                   setMainImg(img);
                   setLightboxIndex(i);
@@ -95,7 +100,7 @@ export default function ProductDetailClient({ product }: Props) {
 
           <motion.button
             type="button"
-            className="relative w-full max-w-md aspect-square bg-surface rounded-2xl shadow-xl overflow-hidden border border-border cursor-zoom-in"
+            className="relative w-full max-w-md overflow-hidden rounded-4xl border border-[rgba(155,122,67,0.12)] bg-(--color-surface) shadow-[0_24px_70px_rgba(61,47,28,0.12)] aspect-square cursor-zoom-in"
             onMouseEnter={() => setMagnify(true)}
             onMouseLeave={() => setMagnify(false)}
             onClick={() => {
@@ -121,21 +126,57 @@ export default function ProductDetailClient({ product }: Props) {
               animate={magnify ? { opacity: 0.18 } : { opacity: 0 }}
               style={{ background: `radial-gradient(circle at center, ${BRAND.surface} 0%, rgba(255,255,255,0) 60%)` }}
             />
+
+            <div className="absolute left-5 top-5 rounded-full bg-[rgba(32,26,21,0.72)] px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.28em] text-white backdrop-blur-md">
+              Tap to preview
+            </div>
+            <div className="absolute bottom-5 left-5 right-5 flex items-center justify-between gap-3 text-white">
+              <div className="rounded-full bg-black/35 px-3 py-2 text-[0.68rem] uppercase tracking-[0.22em] backdrop-blur-md">{product.category}</div>
+              <div className="rounded-full bg-black/35 px-3 py-2 text-[0.68rem] uppercase tracking-[0.22em] backdrop-blur-md">View images</div>
+            </div>
           </motion.button>
         </div>
       </div>
 
-      <div className="lg:w-1/2 w-full flex flex-col gap-8">
-        <h1 className="font-serif text-4xl md:text-5xl font-bold mb-2 text-foreground headline-text">{product.name}</h1>
-        <div className="text-2xl font-serif font-semibold mb-4 text-primary">Rs. {product.price.toLocaleString()} PKR</div>
-        <Button variant="primary" size="lg" className="w-fit" onClick={handleAddToCart}>
-          Add to Bag
-        </Button>
+      <div className="flex w-full flex-col gap-8 lg:w-1/2">
+        <div>
+          <p className="text-[0.72rem] font-semibold uppercase tracking-[0.34em] text-primary">Product story</p>
+          <h1 className="mt-3 font-serif text-4xl font-bold text-foreground md:text-5xl headline-text">{product.name}</h1>
+          <div className="mt-4 text-2xl font-serif font-semibold text-primary">Rs. {product.price.toLocaleString()} PKR</div>
+          <p className="mt-4 max-w-2xl text-base leading-8 text-(--color-muted)">
+            A refined carry piece shaped for real routines, with a premium finish that feels intentional in both casual and dressed-up settings.
+          </p>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-3">
+          {[
+            { label: "Material", value: "Premium finish" },
+            { label: "Best for", value: "Everyday carry" },
+            { label: "Dispatch", value: "Fast fulfillment" },
+          ].map((item) => (
+            <div key={item.label} className="rounded-[1.3rem] border border-[rgba(155,122,67,0.12)] bg-[rgba(255,250,241,0.88)] p-4 shadow-[0_12px_30px_rgba(61,47,28,0.05)]">
+              <div className="text-[0.68rem] uppercase tracking-[0.24em] text-(--color-muted)">{item.label}</div>
+              <div className="mt-2 font-serif text-xl text-foreground">{item.value}</div>
+            </div>
+          ))}
+        </div>
+
+        <div className="flex flex-wrap gap-3">
+          <Button variant="primary" size="lg" className="w-fit" onClick={handleAddToCart}>
+            Add to Bag
+          </Button>
+          <Button variant="secondary" size="lg" className="w-fit" onClick={handleCheckoutNow}>
+            Buy Now
+          </Button>
+          <Button variant="ghost" size="lg" className="w-fit" onClick={() => setLightboxOpen(true)}>
+            View gallery
+          </Button>
+        </div>
 
         <AnimatePresence>
           {showCheck && (
             <motion.div
-              className="flex items-center gap-2 mt-2 text-green-600"
+              className="mt-2 flex items-center gap-2 text-green-600"
               initial={{ opacity: 0, scale: 0.7 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.7 }}
@@ -153,17 +194,29 @@ export default function ProductDetailClient({ product }: Props) {
                   transition={{ duration: 0.7 }}
                 />
               </svg>
-              Added to cart!
+              Added to cart. Ready when you are.
             </motion.div>
           )}
         </AnimatePresence>
 
-        <div className="mt-6 space-y-1">
+        <div className="mt-2 space-y-1">
           <Accordion sx={{ boxShadow: "none", border: "none", mb: 1, background: "none" }}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ fontWeight: 600, fontSize: 18, px: 0 }}>
               Product Details
             </AccordionSummary>
-            <AccordionDetails sx={{ px: 0, color: BRAND.muted }}>{product.details}</AccordionDetails>
+            <AccordionDetails sx={{ px: 0, color: BRAND.muted }}>
+              {product.details}
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                <div className="rounded-[1.1rem] border border-[rgba(155,122,67,0.12)] bg-[rgba(255,250,241,0.7)] p-4">
+                  <div className="text-[0.68rem] uppercase tracking-[0.22em] text-(--color-muted)">Authenticity cue</div>
+                  <p className="mt-2 text-sm leading-6 text-foreground">Designed to feel close to the product: shape, texture, and carry use are all surfaced before checkout.</p>
+                </div>
+                <div className="rounded-[1.1rem] border border-[rgba(155,122,67,0.12)] bg-[rgba(255,250,241,0.7)] p-4">
+                  <div className="text-[0.68rem] uppercase tracking-[0.22em] text-(--color-muted)">Styling note</div>
+                  <p className="mt-2 text-sm leading-6 text-foreground">Pairs naturally with tailored looks, neutral palettes, and daily outfits that need a polished finish.</p>
+                </div>
+              </div>
+            </AccordionDetails>
           </Accordion>
           <Accordion sx={{ boxShadow: "none", border: "none", mb: 1, background: "none" }}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ fontWeight: 600, fontSize: 18, px: 0 }}>
@@ -192,16 +245,24 @@ export default function ProductDetailClient({ product }: Props) {
       <AnimatePresence>
         {showMobileBar && (
           <motion.div
-            className="fixed bottom-0 left-0 w-full bg-background border-t border-border flex items-center justify-between px-4 py-3 z-50 shadow-lg"
+            className="fixed bottom-0 left-0 z-50 flex w-full items-center justify-between border-t border-[rgba(155,122,67,0.14)] bg-[rgba(255,250,241,0.96)] px-4 py-3 shadow-[0_-8px_30px_rgba(61,47,28,0.12)] backdrop-blur-md"
             initial={{ y: 80, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 80, opacity: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <div className="font-serif text-lg font-bold text-primary">Rs. {product.price.toLocaleString()} PKR</div>
-            <Button variant="primary" size="lg" onClick={handleAddToCart}>
-              Add to Bag
-            </Button>
+            <div>
+              <div className="font-serif text-lg font-bold text-foreground">Rs. {product.price.toLocaleString()} PKR</div>
+              <div className="text-[0.68rem] uppercase tracking-[0.22em] text-(--color-muted)">Checkout ready</div>
+            </div>
+            <div className="flex gap-2">
+              <Button variant="secondary" size="lg" onClick={handleCheckoutNow}>
+                Buy Now
+              </Button>
+              <Button variant="primary" size="lg" onClick={handleAddToCart}>
+                Add to Bag
+              </Button>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -232,6 +293,11 @@ export default function ProductDetailClient({ product }: Props) {
             <Button variant="ghost" size="sm" onClick={closeLightbox} className="bg-white/10! text-white! hover:bg-white/20!">
               Close
             </Button>
+          </div>
+
+          <div className="mb-4 flex flex-wrap gap-2 text-[0.68rem] uppercase tracking-[0.22em] text-white/70">
+            <span className="rounded-full border border-white/10 bg-white/5 px-3 py-2">Swipe or use arrows</span>
+            <span className="rounded-full border border-white/10 bg-white/5 px-3 py-2">{lightboxIndex + 1} of {product.images.length}</span>
           </div>
 
           <div className="grid gap-4 lg:grid-cols-[1fr_96px]">

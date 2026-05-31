@@ -41,8 +41,8 @@ function LuxuryButton({ href, children, tone = "dark", className = "" }: LuxuryB
     "inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-medium tracking-[0.12em] uppercase transition duration-300 will-change-transform";
   const variant =
     tone === "dark"
-      ? "bg-[var(--foreground)] text-[var(--background)] shadow-[0_18px_40px_rgba(32,26,21,0.18)] hover:-translate-y-0.5 hover:bg-[#342a21]"
-      : "border border-[rgba(32,26,21,0.12)] bg-[rgba(255,250,241,0.72)] text-[var(--foreground)] backdrop-blur-sm hover:-translate-y-0.5 hover:border-[rgba(155,122,67,0.45)] hover:bg-white";
+      ? "bg-[var(--color-primary)] text-white shadow-[0_18px_40px_rgba(155,122,67,0.22)] hover:-translate-y-0.5 hover:bg-[#8c6e41]"
+      : "border border-[rgba(155,122,67,0.24)] bg-[rgba(255,250,241,0.9)] text-[var(--foreground)] backdrop-blur-sm hover:-translate-y-0.5 hover:border-[rgba(155,122,67,0.45)] hover:bg-white";
 
   return (
     <Link href={href} className={`${base} ${variant} ${className}`}>
@@ -63,17 +63,116 @@ function SectionLabel({ eyebrow, title, description }: { eyebrow: string; title:
 
 function StatBlock({ value, label }: { value: string; label: string }) {
   return (
-    <div className="rounded-[1.35rem] border border-[rgba(32,26,21,0.08)] bg-[rgba(255,250,241,0.76)] px-4 py-4 text-left backdrop-blur-sm">
+    <div className="rounded-[1.35rem] border border-[rgba(155,122,67,0.16)] bg-[rgba(255,250,241,0.82)] px-4 py-4 text-left shadow-[0_14px_34px_rgba(61,47,28,0.06)] backdrop-blur-sm">
       <div className="font-serif text-2xl text-[var(--foreground)]">{value}</div>
       <div className="mt-1 text-[0.72rem] uppercase tracking-[0.24em] text-[var(--color-muted)]">{label}</div>
     </div>
   );
 }
 
+type SpotlightMode = {
+  id: string;
+  label: string;
+  eyebrow: string;
+  title: string;
+  description: string;
+  product: Product;
+  secondaryProduct: Product;
+};
+
+type CategoryShowcase = {
+  id: string;
+  label: string;
+  eyebrow: string;
+  title: string;
+  description: string;
+  href: string;
+  productIds: string[];
+};
+
+const heroSpotlights: SpotlightMode[] = [
+  {
+    id: "signature",
+    label: "Signature drop",
+    eyebrow: "Signature edit",
+    title: "Luxury handbags designed with calm, editorial precision.",
+    description:
+      "The opening story keeps the focus on structured carry, warm neutrals, and a polished silhouette that feels elevated from the first glance.",
+    product: featuredProducts[0] ?? products[0],
+    secondaryProduct: featuredProducts[1] ?? products[1],
+  },
+  {
+    id: "everyday",
+    label: "Everyday carry",
+    eyebrow: "Workday edit",
+    title: "Soft shoulder bags and totes that move easily from office hours to evening plans.",
+    description: "A practical edit for shoppers who want a premium handbag that still feels effortless for daily wear.",
+    product: products.find((product) => product.category === "Tote") ?? featuredProducts[0] ?? products[0],
+    secondaryProduct: products.find((product) => product.category === "Shoulder") ?? featuredProducts[1] ?? products[1],
+  },
+  {
+    id: "occasion",
+    label: "Occasion edit",
+    eyebrow: "Evening edit",
+    title: "Compact mini bags and statement colorways for dressier moments.",
+    description:
+      "A smaller, sharper handbag story that keeps the homepage grounded in occasion-ready category language.",
+    product: featuredProducts[2] ?? products[2],
+    secondaryProduct: products.find((product) => product.category === "Mini") ?? products[2],
+  },
+];
+
+const categoryShowcases: CategoryShowcase[] = [
+  {
+    id: "tote",
+    label: "Totes",
+    eyebrow: "Daily structure",
+    title: "Totes with room for work, travel, and a more composed everyday routine.",
+    description:
+      "Explore clean-lined tote bags when you want storage, shape, and a polished luxury feel in the same piece.",
+    href: "/collection?category=Tote",
+    productIds: products.filter((product) => product.category === "Tote").slice(0, 3).map((product) => product.id),
+  },
+  {
+    id: "shoulder",
+    label: "Shoulder bags",
+    eyebrow: "Style first",
+    title: "Shoulder bags that balance fashion-forward polish with everyday versatility.",
+    description:
+      "A refined shoulder-bag selection for customers looking for a clean silhouette and a modern finish.",
+    href: "/collection?category=Shoulder",
+    productIds: products.filter((product) => product.category === "Shoulder").slice(0, 3).map((product) => product.id),
+  },
+  {
+    id: "hobo",
+    label: "Hobos",
+    eyebrow: "Soft structure",
+    title: "Hobo bags with a relaxed profile and enough volume for the essentials.",
+    description:
+      "This edit keeps the homepage descriptive for search while letting shoppers jump into the most fluid silhouettes.",
+    href: "/collection?category=Hobo",
+    productIds: products.filter((product) => product.category === "Hobo").slice(0, 3).map((product) => product.id),
+  },
+  {
+    id: "mini",
+    label: "Mini bags",
+    eyebrow: "Compact icons",
+    title: "Mini bags for occasions where the silhouette should feel smaller, sharper, and more expressive.",
+    description:
+      "Use the mini edit to keep occasion-focused handbag terms in view while showcasing the most compact pieces.",
+    href: "/collection?category=Mini",
+    productIds: products.filter((product) => product.category === "Mini").slice(0, 3).map((product) => product.id),
+  },
+];
+
+function getProductById(productId: string) {
+  return products.find((product) => product.id === productId);
+}
+
 function LuxuryProductCard({ product, onQuickView, compact = false }: { product: Product; onQuickView: (productId: string) => void; compact?: boolean }) {
   return (
     <motion.article
-      className={`group rounded-[1.75rem] border border-[rgba(32,26,21,0.08)] bg-[rgba(255,250,241,0.92)] shadow-[0_20px_50px_rgba(61,47,28,0.08)] backdrop-blur-sm ${compact ? "p-4" : "p-5"}`}
+      className={`group rounded-[1.75rem] border border-[rgba(155,122,67,0.14)] bg-[rgba(255,250,241,0.94)] shadow-[0_24px_60px_rgba(61,47,28,0.08)] backdrop-blur-sm transition duration-300 hover:border-[rgba(155,122,67,0.28)] ${compact ? "p-4" : "p-5"}`}
       whileHover={{ y: -8 }}
       transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
     >
@@ -87,7 +186,7 @@ function LuxuryProductCard({ product, onQuickView, compact = false }: { product:
             className="object-cover transition duration-700 ease-out group-hover:scale-105"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/42 via-black/0 to-transparent opacity-0 transition duration-500 group-hover:opacity-100" />
-          <div className="absolute left-4 top-4 rounded-full border border-white/20 bg-black/30 px-3 py-1 text-[0.66rem] font-semibold uppercase tracking-[0.24em] text-white backdrop-blur-md">
+          <div className="absolute left-4 top-4 rounded-full border border-white/35 bg-[rgba(155,122,67,0.76)] px-3 py-1 text-[0.66rem] font-semibold uppercase tracking-[0.24em] text-white backdrop-blur-md">
             {product.category}
           </div>
         </div>
@@ -106,44 +205,20 @@ function LuxuryProductCard({ product, onQuickView, compact = false }: { product:
         <button
           type="button"
           onClick={() => onQuickView(product.id)}
-          className="flex-1 rounded-full border border-[rgba(32,26,21,0.1)] bg-white px-4 py-2 text-sm font-medium text-[var(--foreground)] transition hover:border-[rgba(155,122,67,0.4)] hover:text-[var(--color-primary)]"
+          className="flex-1 rounded-full border border-[rgba(155,122,67,0.2)] bg-[rgba(255,250,241,0.96)] px-4 py-2 text-sm font-medium text-[var(--foreground)] transition hover:border-[rgba(155,122,67,0.45)] hover:bg-white hover:text-[var(--color-primary)]"
         >
           Quick view
         </button>
         <Link
           href={`/product/${encodeURIComponent(product.id)}`}
-          className="flex-1 rounded-full bg-[var(--foreground)] px-4 py-2 text-center text-sm font-medium text-white transition hover:bg-[#342a21]"
+          className="flex-1 rounded-full bg-[var(--color-primary)] px-4 py-2 text-center text-sm font-medium text-white transition hover:bg-[#8c6e41]"
         >
-          <p className="text-primary">View details</p>
+          View details
         </Link>
       </div>
     </motion.article>
   );
 }
-
-const featureCards = [
-  {
-    title: "Signature structure",
-    description: "Refined silhouettes and tactile finishes designed to feel tailored rather than trendy.",
-    image: "/banner-1.jpg",
-    productId: featuredProducts[0]?.id,
-    className: "lg:col-span-2",
-  },
-  {
-    title: "Everyday sophistication",
-    description: "Soft neutral bags that transition from workwear to evening with a quiet sense of luxury.",
-    image: "/banner-2.jpg",
-    productId: featuredProducts[1]?.id,
-    className: "",
-  },
-  {
-    title: "Occasion-ready pieces",
-    description: "Compact icons with polished proportions and a premium finish.",
-    image: "/banner-3.jpg",
-    productId: featuredProducts[2]?.id,
-    className: "",
-  },
-];
 
 const trustSignals = [
   { value: "4.9/5", label: "Average rating" },
@@ -190,9 +265,12 @@ const testimonials = [
 
 export default function PremiumHomePage() {
   const [quickViewId, setQuickViewId] = useState<string | null>(null);
-  const heroProduct = featuredProducts[0] ?? products[0];
-  const signatureProduct = featuredProducts[1] ?? products[1];
-  const compactProduct = featuredProducts[2] ?? products[2];
+  const [activeSpotlightId, setActiveSpotlightId] = useState(heroSpotlights[0].id);
+  const [activeCategoryId, setActiveCategoryId] = useState(categoryShowcases[0].id);
+  const activeSpotlight = heroSpotlights.find((spotlight) => spotlight.id === activeSpotlightId) ?? heroSpotlights[0];
+  const activeCategory = categoryShowcases.find((category) => category.id === activeCategoryId) ?? categoryShowcases[0];
+  const activeCategoryProducts = activeCategory.productIds.map((productId) => getProductById(productId)).filter((product): product is Product => Boolean(product));
+  const heroProduct = activeSpotlight.product;
   const quickViewProduct = quickViewId ? products.find((product) => product.id === quickViewId) : undefined;
   const trendProducts = products.slice(3, 9);
 
@@ -218,11 +296,34 @@ export default function PremiumHomePage() {
 
               <div className="mt-10 flex flex-wrap gap-3">
                 <LuxuryButton href="/collection" tone="dark">
-                  <p className="text-primary">Shop collection</p>
+                  Shop collection
                 </LuxuryButton>
                 <LuxuryButton href={`/product/${encodeURIComponent(heroProduct.id)}`} tone="light">
                   Meet the icon
                 </LuxuryButton>
+              </div>
+
+              <p className="mt-7 max-w-xl text-base leading-8 text-[var(--color-muted)] sm:text-lg">{activeSpotlight.description}</p>
+
+              <div className="mt-8 flex flex-wrap gap-2">
+                {heroSpotlights.map((spotlight) => {
+                  const isActive = spotlight.id === activeSpotlight.id;
+                  return (
+                    <button
+                      key={spotlight.id}
+                      type="button"
+                      onClick={() => setActiveSpotlightId(spotlight.id)}
+                      aria-pressed={isActive}
+                      className={`rounded-full border px-4 py-2 text-[0.68rem] font-semibold uppercase tracking-[0.28em] transition duration-300 ${
+                        isActive
+                          ? "border-[var(--color-primary)] bg-[var(--color-primary)] text-white shadow-[0_12px_26px_rgba(155,122,67,0.22)]"
+                          : "border-[rgba(32,26,21,0.1)] bg-[rgba(255,250,241,0.85)] text-[var(--color-muted)] hover:border-[rgba(155,122,67,0.45)] hover:text-[var(--foreground)]"
+                      }`}
+                    >
+                      {spotlight.label}
+                    </button>
+                  );
+                })}
               </div>
 
               <div className="mt-10 grid grid-cols-3 gap-3 sm:gap-4">
@@ -235,7 +336,7 @@ export default function PremiumHomePage() {
 
           <Reveal delay={0.1} className="relative">
             <div className="relative mx-auto max-w-[34rem] lg:max-w-none">
-              <div className="absolute -left-5 top-10 hidden w-52 rounded-[1.8rem] border border-[rgba(255,255,255,0.5)] bg-[rgba(255,250,241,0.86)] p-4 shadow-[0_18px_40px_rgba(32,26,21,0.12)] backdrop-blur-md sm:block">
+              <div className="absolute -left-5 top-10 hidden w-52 rounded-[1.8rem] border border-[rgba(155,122,67,0.16)] bg-[rgba(255,250,241,0.9)] p-4 shadow-[0_18px_40px_rgba(32,26,21,0.12)] backdrop-blur-md sm:block">
                 <p className="text-[0.66rem] font-semibold uppercase tracking-[0.28em] text-[var(--color-muted)]">Featured palette</p>
                 <div className="mt-3 flex gap-2">
                   <span className="h-10 w-10 rounded-full bg-[#efe6d4]" />
@@ -257,19 +358,20 @@ export default function PremiumHomePage() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-black/5 to-transparent" />
                   <div className="absolute left-5 top-5 rounded-full bg-white/20 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.28em] text-white backdrop-blur-md">
-                    Signature drop
+                    {activeSpotlight.eyebrow}
                   </div>
                   <div className="absolute bottom-5 left-5 right-5 flex items-end justify-between gap-4 text-white">
                     <div>
                       <p className="text-[0.7rem] uppercase tracking-[0.25em] text-white/80">Featured piece</p>
                       <p className="mt-2 font-serif text-2xl">{heroProduct.name}</p>
+                      <p className="mt-1 text-sm leading-6 text-white/78">{activeSpotlight.title}</p>
                     </div>
                     <p className="font-serif text-xl">Rs. {heroProduct.price.toLocaleString()}</p>
                   </div>
                 </div>
               </div>
 
-              <div className="absolute -bottom-5 right-4 hidden w-56 rounded-[1.65rem] border border-[rgba(32,26,21,0.08)] bg-[rgba(255,250,241,0.92)] p-4 shadow-[0_20px_40px_rgba(32,26,21,0.1)] backdrop-blur-md lg:block">
+              <div className="absolute -bottom-5 right-4 hidden w-56 rounded-[1.65rem] border border-[rgba(155,122,67,0.16)] bg-[rgba(255,250,241,0.94)] p-4 shadow-[0_20px_40px_rgba(32,26,21,0.1)] backdrop-blur-md lg:block">
                 <p className="text-[0.66rem] font-semibold uppercase tracking-[0.3em] text-[var(--color-muted)]">Style note</p>
                 <p className="mt-3 font-serif text-lg text-[var(--foreground)]">
                   Quiet luxury pieces with enough structure to feel polished and enough softness to feel wearable.
@@ -280,143 +382,65 @@ export default function PremiumHomePage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
+      <section id="shop-by-category" className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
         <Reveal>
           <SectionLabel
-            eyebrow="Featured collections"
-            title="Editorial collection moments that feel considered and expensive."
-            description="Instead of a basic product grid, the homepage leads with immersive collection tiles that showcase shape, texture, and atmosphere before the sale."
+            eyebrow="Shop by category"
+            title="Browse handbags by shape, mood, and everyday use."
+            description="This interactive section keeps tote, shoulder, hobo, and mini language visible while directing shoppers deeper into the catalog."
           />
         </Reveal>
 
-        <div className="mt-10 grid gap-5 lg:grid-cols-3">
-          {featureCards.map((card, index) => {
-            const targetProduct = card.productId ? products.find((product) => product.id === card.productId) : undefined;
-            return (
-              <Reveal key={card.title} delay={index * 0.08} className={card.className}>
-                <Link href={targetProduct ? `/product/${encodeURIComponent(targetProduct.id)}` : "/collection"} className="group block h-full overflow-hidden rounded-[2rem] border border-[rgba(32,26,21,0.08)] bg-[rgba(255,250,241,0.8)] shadow-[0_16px_40px_rgba(61,47,28,0.08)]">
-                  <div className="relative aspect-[5/4] overflow-hidden">
-                    <Image src={card.image} alt={card.title} fill sizes="(max-width: 1024px) 100vw, 33vw" className="object-cover transition duration-700 group-hover:scale-105" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent" />
-                    <div className="absolute inset-x-0 bottom-0 p-6 text-white sm:p-7">
-                      <p className="text-[0.66rem] font-semibold uppercase tracking-[0.3em] text-white/75">Collection</p>
-                      <h3 className="mt-3 font-serif text-2xl leading-tight sm:text-3xl">{card.title}</h3>
-                      <p className="mt-3 max-w-md text-sm leading-7 text-white/82">{card.description}</p>
-                    </div>
-                  </div>
-                </Link>
-              </Reveal>
-            );
-          })}
-        </div>
-      </section>
-
-      <section id="best-sellers" className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
-        <Reveal>
-          <SectionLabel
-            eyebrow="Best sellers"
-            title="Premium product cards with sharper hover states and quick actions."
-            description="The best-selling edit stays minimal, but the interaction model is richer: direct product links, quicker preview access, and a more premium presentation."
-          />
-        </Reveal>
-
-        <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-          {featuredProducts.map((product, index) => (
-            <Reveal key={product.id} delay={index * 0.08}>
-              <LuxuryProductCard product={product} onQuickView={setQuickViewId} />
-            </Reveal>
-          ))}
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
-        <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
+        <div className="mt-10 grid gap-6 lg:grid-cols-[0.92fr_1.08fr]">
           <Reveal>
-            <div className="overflow-hidden rounded-[2rem] border border-[rgba(32,26,21,0.08)] bg-[rgba(255,250,241,0.9)] p-3 shadow-[0_26px_60px_rgba(61,47,28,0.1)]">
-              <div className="relative aspect-[4/5] overflow-hidden rounded-[1.5rem] bg-[#efe4d0]">
-                <Image
-                  src={signatureProduct.secondaryImage ?? signatureProduct.image}
-                  alt={signatureProduct.name}
-                  fill
-                  sizes="(max-width: 1024px) 92vw, 38vw"
-                  className="object-cover"
-                />
+            <div className="rounded-[2.25rem] border border-[rgba(32,26,21,0.08)] bg-[rgba(255,250,241,0.9)] p-6 shadow-[0_24px_70px_rgba(61,47,28,0.08)] sm:p-8 lg:p-10">
+              <div className="flex flex-wrap gap-2">
+                {categoryShowcases.map((category) => {
+                  const isActive = category.id === activeCategory.id;
+
+                  return (
+                    <button
+                      key={category.id}
+                      type="button"
+                      onClick={() => setActiveCategoryId(category.id)}
+                      aria-pressed={isActive}
+                      className={`rounded-full border px-4 py-2 text-[0.68rem] font-semibold uppercase tracking-[0.28em] transition duration-300 ${
+                        isActive
+                          ? "border-[var(--color-primary)] bg-[var(--color-primary)] text-white shadow-[0_12px_26px_rgba(155,122,67,0.22)]"
+                          : "border-[rgba(32,26,21,0.1)] bg-white/60 text-[var(--color-muted)] hover:border-[rgba(155,122,67,0.45)] hover:text-[var(--foreground)]"
+                      }`}
+                    >
+                      {category.label}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="mt-8">
+                <p className="text-[0.72rem] font-semibold uppercase tracking-[0.36em] text-[var(--color-primary)]">{activeCategory.eyebrow}</p>
+                <h3 className="mt-4 font-serif text-3xl text-[var(--foreground)] sm:text-4xl">{activeCategory.title}</h3>
+                <p className="mt-4 max-w-xl text-sm leading-7 text-[var(--color-muted)] sm:text-base">{activeCategory.description}</p>
+                <div className="mt-6 flex flex-wrap gap-3">
+                  <LuxuryButton href={activeCategory.href} tone="dark">
+                    Browse category
+                  </LuxuryButton>
+                  <LuxuryButton href="/collection" tone="light">
+                    View all bags
+                  </LuxuryButton>
+                </div>
               </div>
             </div>
           </Reveal>
 
-          <Reveal delay={0.06}>
-            <div className="max-w-2xl lg:pl-6">
-              <p className="mb-4 text-[0.72rem] font-semibold uppercase tracking-[0.36em] text-[var(--color-primary)]">Brand story</p>
-              <h2 className="font-serif text-3xl leading-tight sm:text-4xl lg:text-5xl">Minimal shape language, elevated with texture, restraint, and warmth.</h2>
-              <p className="mt-6 text-sm leading-7 text-[var(--color-muted)] sm:text-base">
-                Pursethetic is framed like a premium fashion label: quiet spacing, soft neutrals, and carefully staged product imagery that lets the bag do the talking. The brand story section acts like an editorial spread rather than a marketing block.
-              </p>
-              <div className="mt-8 space-y-4">
-                {[
-                  "Soft structure with a refined everyday silhouette",
-                  "Warm neutral palette built for luxury styling",
-                  "Fashion-forward merchandising with premium restraint",
-                ].map((item) => (
-                  <div key={item} className="flex items-start gap-4 rounded-[1.35rem] border border-[rgba(32,26,21,0.08)] bg-[rgba(255,250,241,0.82)] px-4 py-4">
-                    <span className="mt-1 h-2.5 w-2.5 rounded-full bg-[var(--color-primary)]" />
-                    <p className="text-sm leading-7 text-[var(--foreground)]">{item}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
-        <Reveal>
-          <SectionLabel
-            eyebrow="Featured product showcase"
-            title="A single product hero with a fashion-editorial composition."
-            description="This section breaks the grid and gives one product the room it deserves, pairing close-up imagery with concise storytelling and a clear conversion path."
-          />
-        </Reveal>
-
-        <div className="mt-10 grid gap-6 overflow-hidden rounded-[2.25rem] border border-[rgba(32,26,21,0.08)] bg-[rgba(255,250,241,0.86)] shadow-[0_26px_70px_rgba(61,47,28,0.1)] lg:grid-cols-[1.1fr_0.9fr]">
-          <div className="relative min-h-[28rem]">
-            <Image
-              src={compactProduct.secondaryImage ?? compactProduct.image}
-              alt={compactProduct.name}
-              fill
-              sizes="(max-width: 1024px) 100vw, 55vw"
-              className="object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/24 via-black/0 to-transparent" />
-            <div className="absolute left-6 top-6 rounded-full bg-white/20 px-3 py-1 text-[0.66rem] font-semibold uppercase tracking-[0.3em] text-white backdrop-blur-md">
-              Featured product
-            </div>
-          </div>
-          <div className="flex flex-col justify-between gap-6 p-6 sm:p-8 lg:p-10">
-            <div>
-              <p className="text-[0.7rem] font-semibold uppercase tracking-[0.36em] text-[var(--color-muted)]">Most loved silhouette</p>
-              <h3 className="mt-4 font-serif text-3xl text-[var(--foreground)] sm:text-4xl">{compactProduct.name}</h3>
-              <p className="mt-4 max-w-xl text-sm leading-7 text-[var(--color-muted)] sm:text-base">
-                {compactProduct.details}
-              </p>
-              <div className="mt-6 flex flex-wrap gap-3 text-sm text-[var(--color-muted)]">
-                <span className="rounded-full border border-[rgba(32,26,21,0.08)] px-4 py-2">Premium finish</span>
-                <span className="rounded-full border border-[rgba(32,26,21,0.08)] px-4 py-2">Everyday carry</span>
-                <span className="rounded-full border border-[rgba(32,26,21,0.08)] px-4 py-2">Rs. {compactProduct.price.toLocaleString()}</span>
-              </div>
-            </div>
-            <div className="flex flex-wrap gap-3">
-              <LuxuryButton href={`/product/${encodeURIComponent(compactProduct.id)}`} tone="dark">
-                <p className="text-primary">Shop the piece</p>
-              </LuxuryButton>
-              <LuxuryButton href="/collection" tone="light">
-                Explore all bags
-              </LuxuryButton>
-            </div>
+          <div className="grid gap-5 md:grid-cols-2">
+            {activeCategoryProducts.slice(0, 2).map((product, index) => (
+              <Reveal key={product.id} delay={index * 0.07}>
+                <LuxuryProductCard product={product} onQuickView={setQuickViewId} compact />
+              </Reveal>
+            ))}
           </div>
         </div>
       </section>
-
       <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
         <Reveal>
           <SectionLabel
@@ -591,7 +615,7 @@ export default function PremiumHomePage() {
         </Reveal>
       </section>
 
-      <footer className="border-t border-[rgba(32,26,21,0.08)] bg-[rgba(255,250,241,0.6)]">
+      <footer className="border-t border-[rgba(155,122,67,0.14)] bg-[rgba(255,250,241,0.6)]">
         <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-16">
           <div className="grid gap-10 lg:grid-cols-[1.2fr_0.8fr_0.8fr_0.8fr]">
             <div>
@@ -614,17 +638,17 @@ export default function PremiumHomePage() {
             <div>
               <h3 className="text-[0.7rem] font-semibold uppercase tracking-[0.3em] text-[var(--color-muted)]">Experience</h3>
               <ul className="mt-5 space-y-3 text-sm text-[var(--foreground)]">
-                <li>Shipping</li>
-                <li>Returns</li>
-                <li>Support</li>
+                <li><Link href="/about">About us</Link></li>
+                <li><Link href="/policies/shipping-policy">Shipping policy</Link></li>
+                <li><Link href="/policies/refund-policy">Refund policy</Link></li>
               </ul>
             </div>
             <div>
               <h3 className="text-[0.7rem] font-semibold uppercase tracking-[0.3em] text-[var(--color-muted)]">Contact</h3>
               <ul className="mt-5 space-y-3 text-sm text-[var(--foreground)]">
-                <li>Instagram</li>
-                <li>WhatsApp</li>
-                <li>Email concierge</li>
+                <li><Link href="/contact">Contact us</Link></li>
+                <li><Link href="/policies/privacy-policy">Privacy policy</Link></li>
+                <li><Link href="/policies/terms-of-service">Terms of service</Link></li>
               </ul>
             </div>
           </div>

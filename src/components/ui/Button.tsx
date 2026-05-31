@@ -11,7 +11,7 @@ type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
 };
 
 export default function Button({ variant = "primary", size = "md", className = "", children, ...props }: ButtonProps) {
-  const base = "inline-flex items-center justify-center font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2";
+  const base = "inline-flex items-center justify-center rounded-full font-medium transition focus:outline-none focus:ring-2 focus:ring-offset-2";
 
   const sizeMap: Record<Size, string> = {
     sm: "px-2 py-1 text-sm",
@@ -20,9 +20,9 @@ export default function Button({ variant = "primary", size = "md", className = "
   };
 
   const variantMap: Record<Variant, string> = {
-    primary: "bg-black text-white hover:opacity-95",
-    secondary: "bg-gray-100 text-gray-900 hover:bg-gray-200",
-    ghost: "bg-transparent text-gray-900 hover:bg-gray-50",
+    primary: "bg-[var(--color-primary)] text-white shadow-[0_16px_32px_rgba(155,122,67,0.18)] hover:bg-[var(--color-primary-hover)]",
+    secondary: "border border-[rgba(155,122,67,0.18)] bg-[rgba(255,250,241,0.92)] text-[var(--foreground)] hover:border-[rgba(155,122,67,0.35)] hover:bg-white",
+    ghost: "bg-transparent text-[var(--foreground)] hover:bg-[rgba(155,122,67,0.08)]",
   };
 
   const classes = `${base} ${sizeMap[size]} ${variantMap[variant]} ${className}`;
