@@ -114,7 +114,7 @@ function LuxuryProductCard({ product, onQuickView, compact = false }: { product:
           href={`/product/${encodeURIComponent(product.id)}`}
           className="flex-1 rounded-full bg-[var(--foreground)] px-4 py-2 text-center text-sm font-medium text-white transition hover:bg-[#342a21]"
         >
-          View details
+          <p className="text-primary">View details</p>
         </Link>
       </div>
     </motion.article>
@@ -218,7 +218,7 @@ export default function PremiumHomePage() {
 
               <div className="mt-10 flex flex-wrap gap-3">
                 <LuxuryButton href="/collection" tone="dark">
-                  Shop collection
+                  <p className="text-primary">Shop collection</p>
                 </LuxuryButton>
                 <LuxuryButton href={`/product/${encodeURIComponent(heroProduct.id)}`} tone="light">
                   Meet the icon
@@ -407,7 +407,7 @@ export default function PremiumHomePage() {
             </div>
             <div className="flex flex-wrap gap-3">
               <LuxuryButton href={`/product/${encodeURIComponent(compactProduct.id)}`} tone="dark">
-                Shop the piece
+                <p className="text-primary">Shop the piece</p>
               </LuxuryButton>
               <LuxuryButton href="/collection" tone="light">
                 Explore all bags
