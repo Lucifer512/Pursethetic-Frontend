@@ -8,6 +8,7 @@ import ProductCard from "./ProductCard";
 import Button from "./ui/Button";
 import { BRAND } from "../styles/tokens";
 import { type Product } from "../data/products";
+import MobileCartFab from "./home/MobileCartFab";
 
 const sortOptions = ["Featured", "Price: Low to High", "Price: High to Low"];
 
@@ -205,6 +206,8 @@ export default function CollectionPageClient({ initialCategory = "All", products
           </Button>
         </div>
       )}
+
+      <MobileCartFab />
     </div>
   );
 }

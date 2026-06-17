@@ -7,6 +7,10 @@ import { useState, type ReactNode } from "react";
 import QuickViewModal from "../QuickViewModal";
 import { type Product } from "../../data/products";
 import { type Collection } from "../../lib/db";
+import MarqueeStrip from "./MarqueeStrip";
+import ProcessSection from "./ProcessSection";
+import MobileCartFab from "./MobileCartFab";
+import LuxuryProductCard from "./LuxuryProductCard";
 
 type RevealProps = {
   children: ReactNode;
@@ -96,56 +100,6 @@ type HomePageProps = {
   collections?: Collection[];
 };
 
-function LuxuryProductCard({ product, onQuickView, compact = false }: { product: Product; onQuickView: (productId: string) => void; compact?: boolean }) {
-  return (
-    <motion.article
-      className={`group rounded-[1.75rem] border border-[rgba(155,122,67,0.14)] bg-[rgba(255,250,241,0.94)] shadow-[0_24px_60px_rgba(61,47,28,0.08)] backdrop-blur-sm transition duration-300 hover:border-[rgba(155,122,67,0.28)] ${compact ? "p-4" : "p-5"}`}
-      whileHover={{ y: -8 }}
-      transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-    >
-      <Link href={`/product/${encodeURIComponent(product.id)}`} className="block">
-        <div className="relative aspect-[4/5] overflow-hidden rounded-[1.35rem] bg-[#f3ede1]">
-          <Image
-            src={product.image}
-            alt={product.name}
-            fill
-            sizes="(max-width: 768px) 82vw, 30vw"
-            className="object-cover transition duration-700 ease-out group-hover:scale-105"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/42 via-black/0 to-transparent opacity-0 transition duration-500 group-hover:opacity-100" />
-          <div className="absolute left-4 top-4 rounded-full border border-white/35 bg-[rgba(155,122,67,0.76)] px-3 py-1 text-[0.66rem] font-semibold uppercase tracking-[0.24em] text-white backdrop-blur-md">
-            {product.category}
-          </div>
-        </div>
-        <div className="mt-5 flex items-start justify-between gap-4 text-left">
-          <div>
-            <h3 className="font-serif text-lg text-[var(--foreground)] transition group-hover:text-[var(--color-primary)]">{product.name}</h3>
-            <p className="mt-1 text-sm leading-6 text-[var(--color-muted)]">{product.description}</p>
-          </div>
-          <div className="shrink-0 text-right">
-            <div className="font-serif text-lg text-[var(--foreground)]">Rs. {product.price.toLocaleString()}</div>
-            <div className="mt-1 text-[0.7rem] uppercase tracking-[0.24em] text-[var(--color-muted)]">PKR</div>
-          </div>
-        </div>
-      </Link>
-      <div className="mt-5 flex gap-3">
-        <button
-          type="button"
-          onClick={() => onQuickView(product.id)}
-          className="flex-1 rounded-full border border-[rgba(155,122,67,0.2)] bg-[rgba(255,250,241,0.96)] px-4 py-2 text-sm font-medium text-[var(--foreground)] transition hover:border-[rgba(155,122,67,0.45)] hover:bg-white hover:text-[var(--color-primary)]"
-        >
-          Quick view
-        </button>
-        <Link
-          href={`/product/${encodeURIComponent(product.id)}`}
-          className="flex-1 rounded-full bg-[var(--color-primary)] px-4 py-2 text-center text-sm font-medium text-white transition hover:bg-[#8c6e41]"
-        >
-          View details
-        </Link>
-      </div>
-    </motion.article>
-  );
-}
 
 const trustSignals = [
   { value: "4.9/5", label: "Average rating" },
@@ -397,6 +351,9 @@ export default function PremiumHomePage({ products, featuredProducts, categories
         </div>
       </section>
 
+      {/* ── Marquee strip ── */}
+      <MarqueeStrip />
+
       {/* ── Shop by category ── */}
       {categoryShowcases.length > 0 && (
         <section id="shop-by-category" className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
@@ -630,6 +587,9 @@ export default function PremiumHomePage({ products, featuredProducts, categories
         </div>
       </section>
 
+      {/* ── Our process ── */}
+      <ProcessSection />
+
       {/* ── Editorial banners ── */}
       <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
         <Reveal>
@@ -753,6 +713,7 @@ export default function PremiumHomePage({ products, featuredProducts, categories
         </div>
       </footer>
 
+      <MobileCartFab />
       <QuickViewModal open={!!quickViewProduct} product={quickViewProduct} onClose={() => setQuickViewId(null)} />
     </main>
   );
