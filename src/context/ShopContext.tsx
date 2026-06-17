@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
 type CartItem = {
   id: string;
@@ -23,9 +23,27 @@ type ShopContextType = {
 
 const ShopContext = createContext<ShopContextType | undefined>(undefined);
 
+const CART_STORAGE_KEY = "pursethetic_cart";
+
 export function ShopProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isSidebarOpen, setSidebarOpen] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(CART_STORAGE_KEY);
+      if (saved) setCart(JSON.parse(saved));
+    } catch {}
+    setHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    try {
+      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
+    } catch {}
+  }, [cart, hydrated]);
 
   function addToCart(item: Omit<CartItem, "quantity">, qty = 1) {
     setCart((prev) => {
@@ -49,17 +67,9 @@ export function ShopProvider({ children }: { children: ReactNode }) {
     setCart([]);
   }
 
-  function openSidebar() {
-    setSidebarOpen(true);
-  }
-
-  function closeSidebar() {
-    setSidebarOpen(false);
-  }
-
-  function toggleSidebar() {
-    setSidebarOpen((s) => !s);
-  }
+  function openSidebar() { setSidebarOpen(true); }
+  function closeSidebar() { setSidebarOpen(false); }
+  function toggleSidebar() { setSidebarOpen((s) => !s); }
 
   return (
     <ShopContext.Provider value={{ cart, addToCart, removeFromCart, clearCart, openSidebar, closeSidebar, toggleSidebar, isSidebarOpen }}>

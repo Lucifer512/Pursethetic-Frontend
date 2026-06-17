@@ -2,7 +2,7 @@ export type Product = {
   id: string;
   slug: string;
   name: string;
-  price: number;
+  price: number;         // in PKR
   image: string;
   secondaryImage?: string;
   images: string[];
@@ -12,6 +12,7 @@ export type Product = {
   shipping: string;
   care: string;
   featured?: boolean;
+  tags?: string[];       // e.g. ["new", "sale", "limited"]
 };
 
 type ProductFamily = "tote" | "shoulder" | "hobo" | "mini";

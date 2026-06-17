@@ -3,6 +3,7 @@ import React from "react";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
+import CloseIcon from "@mui/icons-material/Close";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useShop } from "../context/ShopContext";
@@ -51,8 +52,8 @@ export default function CartSidebar() {
               <h2 className="mt-2 font-serif text-2xl text-foreground">Ready for checkout</h2>
               <p className="mt-2 text-sm leading-6 text-(--color-muted)">{totalItems} item{totalItems === 1 ? "" : "s"} selected</p>
             </div>
-            <Button aria-label="close bag" onClick={closeSidebar} variant="ghost" size="sm" className="h-10 w-10 rounded-full p-0">
-              ×
+            <Button aria-label="Close bag" onClick={closeSidebar} variant="ghost" size="sm" className="h-11 w-11 rounded-full p-0">
+              <CloseIcon fontSize="small" />
             </Button>
           </div>
 

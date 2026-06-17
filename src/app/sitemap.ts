@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { products } from "../data/products";
+import { getAllProducts } from "@/lib/db";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.pursethetic.com";
 
@@ -7,14 +7,12 @@ function absoluteUrl(pathname: string) {
   return new URL(pathname, siteUrl).toString();
 }
 
-function uniqueCategories() {
-  return Array.from(new Set(products.map((product) => product.category))).sort();
-}
-
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
+  const products = await getAllProducts();
+  const categories = Array.from(new Set(products.map((p) => p.category))).sort();
 
-  const categoryPaths = uniqueCategories().map((category) => ({
+  const categoryPaths = categories.map((category) => ({
     url: absoluteUrl(`/collection?category=${encodeURIComponent(category)}`),
     lastModified: now,
     changeFrequency: "weekly" as const,
@@ -22,66 +20,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }));
 
   return [
-    {
-      url: absoluteUrl("/"),
-      lastModified: now,
-      changeFrequency: "daily",
-      priority: 1,
-    },
-    {
-      url: absoluteUrl("/about"),
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
-    {
-      url: absoluteUrl("/contact"),
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
-    {
-      url: absoluteUrl("/collection"),
-      lastModified: now,
-      changeFrequency: "daily",
-      priority: 0.9,
-    },
-    {
-      url: absoluteUrl("/policies"),
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.65,
-    },
-    {
-      url: absoluteUrl("/policies/privacy-policy"),
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.6,
-    },
-    {
-      url: absoluteUrl("/policies/refund-policy"),
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.6,
-    },
-    {
-      url: absoluteUrl("/policies/shipping-policy"),
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.6,
-    },
-    {
-      url: absoluteUrl("/policies/terms-of-service"),
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.6,
-    },
-    {
-      url: absoluteUrl("/policies/contact-information"),
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.6,
-    },
+    { url: absoluteUrl("/"), lastModified: now, changeFrequency: "daily", priority: 1 },
+    { url: absoluteUrl("/about"), lastModified: now, changeFrequency: "monthly", priority: 0.7 },
+    { url: absoluteUrl("/contact"), lastModified: now, changeFrequency: "monthly", priority: 0.7 },
+    { url: absoluteUrl("/collection"), lastModified: now, changeFrequency: "daily", priority: 0.9 },
+    { url: absoluteUrl("/policies"), lastModified: now, changeFrequency: "monthly", priority: 0.65 },
+    { url: absoluteUrl("/policies/privacy-policy"), lastModified: now, changeFrequency: "monthly", priority: 0.6 },
+    { url: absoluteUrl("/policies/refund-policy"), lastModified: now, changeFrequency: "monthly", priority: 0.6 },
+    { url: absoluteUrl("/policies/shipping-policy"), lastModified: now, changeFrequency: "monthly", priority: 0.6 },
+    { url: absoluteUrl("/policies/terms-of-service"), lastModified: now, changeFrequency: "monthly", priority: 0.6 },
+    { url: absoluteUrl("/policies/contact-information"), lastModified: now, changeFrequency: "monthly", priority: 0.6 },
     ...categoryPaths,
     ...products.map((product) => ({
       url: absoluteUrl(`/product/${product.slug}`),

@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import PremiumHomePage from "@/components/home/PremiumHomePage";
+import { getAllProducts, getFeaturedProducts, getCategories, getCollections } from "@/lib/db";
+
+export const dynamic = "force-dynamic";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.pursethetic.com";
 
@@ -55,11 +58,23 @@ const structuredData = {
   ],
 };
 
-export default function HomePage() {
+export default async function HomePage() {
+  const [products, featuredProducts, categories, collections] = await Promise.all([
+    getAllProducts(),
+    getFeaturedProducts(),
+    getCategories(),
+    getCollections(),
+  ]);
+
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
-      <PremiumHomePage />
+      <PremiumHomePage
+        products={products}
+        featuredProducts={featuredProducts}
+        categories={categories}
+        collections={collections}
+      />
     </>
   );
 }

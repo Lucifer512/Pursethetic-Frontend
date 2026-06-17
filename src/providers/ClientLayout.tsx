@@ -5,11 +5,16 @@ import CartSidebar from "../components/CartSidebar";
 import ClientOnly from "./ClientOnly";
 import PageTransition from "../components/PageTransition";
 
-export default function ClientLayout({ children }: { children: React.ReactNode }) {
+type Props = {
+  children: React.ReactNode;
+  categories?: string[];
+};
+
+export default function ClientLayout({ children, categories = [] }: Props) {
   return (
     <>
       <ClientOnly>
-        <Header />
+        <Header categories={categories} />
       </ClientOnly>
       <PageTransition>{children}</PageTransition>
       <ClientOnly>
@@ -18,4 +23,3 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     </>
   );
 }
-

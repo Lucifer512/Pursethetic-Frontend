@@ -5,7 +5,8 @@ import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { useState, type ReactNode } from "react";
 import QuickViewModal from "../QuickViewModal";
-import { featuredProducts, products, type Product } from "../../data/products";
+import { type Product } from "../../data/products";
+import { type Collection } from "../../lib/db";
 
 type RevealProps = {
   children: ReactNode;
@@ -22,7 +23,6 @@ type LuxuryButtonProps = {
 
 function Reveal({ children, delay = 0, className = "" }: RevealProps) {
   const reduceMotion = useReducedMotion() ?? false;
-
   return (
     <motion.div
       className={className}
@@ -43,7 +43,6 @@ function LuxuryButton({ href, children, tone = "dark", className = "" }: LuxuryB
     tone === "dark"
       ? "bg-[var(--color-primary)] text-white shadow-[0_18px_40px_rgba(155,122,67,0.22)] hover:-translate-y-0.5 hover:bg-[#8c6e41]"
       : "border border-[rgba(155,122,67,0.24)] bg-[rgba(255,250,241,0.9)] text-[var(--foreground)] backdrop-blur-sm hover:-translate-y-0.5 hover:border-[rgba(155,122,67,0.45)] hover:bg-white";
-
   return (
     <Link href={href} className={`${base} ${variant} ${className}`}>
       {children}
@@ -90,84 +89,12 @@ type CategoryShowcase = {
   productIds: string[];
 };
 
-const heroSpotlights: SpotlightMode[] = [
-  {
-    id: "signature",
-    label: "Signature drop",
-    eyebrow: "Signature edit",
-    title: "Luxury handbags designed with calm, editorial precision.",
-    description:
-      "The opening story keeps the focus on structured carry, warm neutrals, and a polished silhouette that feels elevated from the first glance.",
-    product: featuredProducts[0] ?? products[0],
-    secondaryProduct: featuredProducts[1] ?? products[1],
-  },
-  {
-    id: "everyday",
-    label: "Everyday carry",
-    eyebrow: "Workday edit",
-    title: "Soft shoulder bags and totes that move easily from office hours to evening plans.",
-    description: "A practical edit for shoppers who want a premium handbag that still feels effortless for daily wear.",
-    product: products.find((product) => product.category === "Tote") ?? featuredProducts[0] ?? products[0],
-    secondaryProduct: products.find((product) => product.category === "Shoulder") ?? featuredProducts[1] ?? products[1],
-  },
-  {
-    id: "occasion",
-    label: "Occasion edit",
-    eyebrow: "Evening edit",
-    title: "Compact mini bags and statement colorways for dressier moments.",
-    description:
-      "A smaller, sharper handbag story that keeps the homepage grounded in occasion-ready category language.",
-    product: featuredProducts[2] ?? products[2],
-    secondaryProduct: products.find((product) => product.category === "Mini") ?? products[2],
-  },
-];
-
-const categoryShowcases: CategoryShowcase[] = [
-  {
-    id: "tote",
-    label: "Totes",
-    eyebrow: "Daily structure",
-    title: "Totes with room for work, travel, and a more composed everyday routine.",
-    description:
-      "Explore clean-lined tote bags when you want storage, shape, and a polished luxury feel in the same piece.",
-    href: "/collection?category=Tote",
-    productIds: products.filter((product) => product.category === "Tote").slice(0, 3).map((product) => product.id),
-  },
-  {
-    id: "shoulder",
-    label: "Shoulder bags",
-    eyebrow: "Style first",
-    title: "Shoulder bags that balance fashion-forward polish with everyday versatility.",
-    description:
-      "A refined shoulder-bag selection for customers looking for a clean silhouette and a modern finish.",
-    href: "/collection?category=Shoulder",
-    productIds: products.filter((product) => product.category === "Shoulder").slice(0, 3).map((product) => product.id),
-  },
-  {
-    id: "hobo",
-    label: "Hobos",
-    eyebrow: "Soft structure",
-    title: "Hobo bags with a relaxed profile and enough volume for the essentials.",
-    description:
-      "This edit keeps the homepage descriptive for search while letting shoppers jump into the most fluid silhouettes.",
-    href: "/collection?category=Hobo",
-    productIds: products.filter((product) => product.category === "Hobo").slice(0, 3).map((product) => product.id),
-  },
-  {
-    id: "mini",
-    label: "Mini bags",
-    eyebrow: "Compact icons",
-    title: "Mini bags for occasions where the silhouette should feel smaller, sharper, and more expressive.",
-    description:
-      "Use the mini edit to keep occasion-focused handbag terms in view while showcasing the most compact pieces.",
-    href: "/collection?category=Mini",
-    productIds: products.filter((product) => product.category === "Mini").slice(0, 3).map((product) => product.id),
-  },
-];
-
-function getProductById(productId: string) {
-  return products.find((product) => product.id === productId);
-}
+type HomePageProps = {
+  products: Product[];
+  featuredProducts: Product[];
+  categories?: string[];
+  collections?: Collection[];
+};
 
 function LuxuryProductCard({ product, onQuickView, compact = false }: { product: Product; onQuickView: (productId: string) => void; compact?: boolean }) {
   return (
@@ -263,15 +190,106 @@ const testimonials = [
   },
 ];
 
-export default function PremiumHomePage() {
+// Editorial copy per known category name — generic fallback for any DB-defined category
+const CATEGORY_EDITORIAL: Record<string, { label: string; eyebrow: string; title: string; description: string }> = {
+  Tote: {
+    label: "Totes",
+    eyebrow: "Daily structure",
+    title: "Totes with room for work, travel, and a more composed everyday routine.",
+    description: "Explore clean-lined tote bags when you want storage, shape, and a polished luxury feel in the same piece.",
+  },
+  Shoulder: {
+    label: "Shoulder bags",
+    eyebrow: "Style first",
+    title: "Shoulder bags that balance fashion-forward polish with everyday versatility.",
+    description: "A refined shoulder-bag selection for customers looking for a clean silhouette and a modern finish.",
+  },
+  Hobo: {
+    label: "Hobos",
+    eyebrow: "Soft structure",
+    title: "Hobo bags with a relaxed profile and enough volume for the essentials.",
+    description: "This edit keeps the homepage descriptive for search while letting shoppers jump into the most fluid silhouettes.",
+  },
+  Mini: {
+    label: "Mini bags",
+    eyebrow: "Compact icons",
+    title: "Mini bags for occasions where the silhouette should feel smaller, sharper, and more expressive.",
+    description: "Use the mini edit to keep occasion-focused handbag terms in view while showcasing the most compact pieces.",
+  },
+};
+
+const FALLBACK_CATEGORY_NAMES = ["Tote", "Shoulder", "Hobo", "Mini"];
+
+function buildCategoryShowcases(categories: string[], products: Product[]): CategoryShowcase[] {
+  // Strip "All" from the front, fall back to hardcoded 4 if empty
+  const names = categories.filter((c) => c !== "All");
+  const sourceNames = names.length > 0 ? names : FALLBACK_CATEGORY_NAMES;
+
+  return sourceNames.map((name) => {
+    const editorial = CATEGORY_EDITORIAL[name] ?? {
+      label: `${name} bags`,
+      eyebrow: name,
+      title: `${name} bags crafted with premium materials and refined lines.`,
+      description: `Discover our curated selection of ${name.toLowerCase()} handbags, each chosen for its finish and everyday appeal.`,
+    };
+    return {
+      id: name.toLowerCase().replace(/\s+/g, "-"),
+      ...editorial,
+      href: `/collection?category=${encodeURIComponent(name)}`,
+      productIds: products.filter((p) => p.category === name).slice(0, 3).map((p) => p.id),
+    };
+  });
+}
+
+export default function PremiumHomePage({ products, featuredProducts, categories = [], collections = [] }: HomePageProps) {
+  const heroSpotlights: SpotlightMode[] = [
+    {
+      id: "signature",
+      label: "Signature drop",
+      eyebrow: "Signature edit",
+      title: "Luxury handbags designed with calm, editorial precision.",
+      description:
+        "The opening story keeps the focus on structured carry, warm neutrals, and a polished silhouette that feels elevated from the first glance.",
+      product: featuredProducts[0] ?? products[0],
+      secondaryProduct: featuredProducts[1] ?? products[1],
+    },
+    {
+      id: "everyday",
+      label: "Everyday carry",
+      eyebrow: "Workday edit",
+      title: "Soft shoulder bags and totes that move easily from office hours to evening plans.",
+      description: "A practical edit for shoppers who want a premium handbag that still feels effortless for daily wear.",
+      product: products.find((p) => p.category === "Tote") ?? featuredProducts[0] ?? products[0],
+      secondaryProduct: products.find((p) => p.category === "Shoulder") ?? featuredProducts[1] ?? products[1],
+    },
+    {
+      id: "occasion",
+      label: "Occasion edit",
+      eyebrow: "Evening edit",
+      title: "Compact mini bags and statement colorways for dressier moments.",
+      description:
+        "A smaller, sharper handbag story that keeps the homepage grounded in occasion-ready category language.",
+      product: featuredProducts[2] ?? products[2],
+      secondaryProduct: products.find((p) => p.category === "Mini") ?? products[2],
+    },
+  ];
+
+  const categoryShowcases = buildCategoryShowcases(categories, products);
+
+  function getProductById(productId: string) {
+    return products.find((p) => p.id === productId);
+  }
+
   const [quickViewId, setQuickViewId] = useState<string | null>(null);
   const [activeSpotlightId, setActiveSpotlightId] = useState(heroSpotlights[0].id);
-  const [activeCategoryId, setActiveCategoryId] = useState(categoryShowcases[0].id);
-  const activeSpotlight = heroSpotlights.find((spotlight) => spotlight.id === activeSpotlightId) ?? heroSpotlights[0];
-  const activeCategory = categoryShowcases.find((category) => category.id === activeCategoryId) ?? categoryShowcases[0];
-  const activeCategoryProducts = activeCategory.productIds.map((productId) => getProductById(productId)).filter((product): product is Product => Boolean(product));
+  const [activeCategoryId, setActiveCategoryId] = useState(categoryShowcases[0]?.id ?? "");
+  const activeSpotlight = heroSpotlights.find((s) => s.id === activeSpotlightId) ?? heroSpotlights[0];
+  const activeCategory = categoryShowcases.find((c) => c.id === activeCategoryId) ?? categoryShowcases[0];
+  const activeCategoryProducts = (activeCategory?.productIds ?? [])
+    .map((id) => getProductById(id))
+    .filter((p): p is Product => Boolean(p));
   const heroProduct = activeSpotlight.product;
-  const quickViewProduct = quickViewId ? products.find((product) => product.id === quickViewId) : undefined;
+  const quickViewProduct = quickViewId ? products.find((p) => p.id === quickViewId) : undefined;
   const trendProducts = products.slice(3, 9);
 
   return (
@@ -280,6 +298,7 @@ export default function PremiumHomePage() {
       <div className="pointer-events-none absolute right-0 top-40 h-72 w-72 rounded-full bg-[rgba(155,122,67,0.08)] blur-3xl" />
       <div className="pointer-events-none absolute left-0 top-[38rem] h-80 w-80 rounded-full bg-[rgba(32,26,21,0.05)] blur-3xl" />
 
+      {/* ── Hero ── */}
       <section className="mx-auto max-w-7xl px-4 pb-12 pt-8 sm:px-6 lg:px-8 lg:pb-20 lg:pt-16">
         <div className="grid items-center gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14">
           <Reveal className="relative z-10">
@@ -295,12 +314,8 @@ export default function PremiumHomePage() {
               </p>
 
               <div className="mt-10 flex flex-wrap gap-3">
-                <LuxuryButton href="/collection" tone="dark">
-                  Shop collection
-                </LuxuryButton>
-                <LuxuryButton href={`/product/${encodeURIComponent(heroProduct.id)}`} tone="light">
-                  Meet the icon
-                </LuxuryButton>
+                <LuxuryButton href="/collection" tone="dark">Shop collection</LuxuryButton>
+                <LuxuryButton href={`/product/${encodeURIComponent(heroProduct.id)}`} tone="light">Meet the icon</LuxuryButton>
               </div>
 
               <p className="mt-7 max-w-xl text-base leading-8 text-[var(--color-muted)] sm:text-lg">{activeSpotlight.description}</p>
@@ -382,65 +397,137 @@ export default function PremiumHomePage() {
         </div>
       </section>
 
-      <section id="shop-by-category" className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
-        <Reveal>
-          <SectionLabel
-            eyebrow="Shop by category"
-            title="Browse handbags by shape, mood, and everyday use."
-            description="This interactive section keeps tote, shoulder, hobo, and mini language visible while directing shoppers deeper into the catalog."
-          />
-        </Reveal>
-
-        <div className="mt-10 grid gap-6 lg:grid-cols-[0.92fr_1.08fr]">
+      {/* ── Shop by category ── */}
+      {categoryShowcases.length > 0 && (
+        <section id="shop-by-category" className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
           <Reveal>
-            <div className="rounded-[2.25rem] border border-[rgba(32,26,21,0.08)] bg-[rgba(255,250,241,0.9)] p-6 shadow-[0_24px_70px_rgba(61,47,28,0.08)] sm:p-8 lg:p-10">
-              <div className="flex flex-wrap gap-2">
-                {categoryShowcases.map((category) => {
-                  const isActive = category.id === activeCategory.id;
-
-                  return (
-                    <button
-                      key={category.id}
-                      type="button"
-                      onClick={() => setActiveCategoryId(category.id)}
-                      aria-pressed={isActive}
-                      className={`rounded-full border px-4 py-2 text-[0.68rem] font-semibold uppercase tracking-[0.28em] transition duration-300 ${
-                        isActive
-                          ? "border-[var(--color-primary)] bg-[var(--color-primary)] text-white shadow-[0_12px_26px_rgba(155,122,67,0.22)]"
-                          : "border-[rgba(32,26,21,0.1)] bg-white/60 text-[var(--color-muted)] hover:border-[rgba(155,122,67,0.45)] hover:text-[var(--foreground)]"
-                      }`}
-                    >
-                      {category.label}
-                    </button>
-                  );
-                })}
-              </div>
-
-              <div className="mt-8">
-                <p className="text-[0.72rem] font-semibold uppercase tracking-[0.36em] text-[var(--color-primary)]">{activeCategory.eyebrow}</p>
-                <h3 className="mt-4 font-serif text-3xl text-[var(--foreground)] sm:text-4xl">{activeCategory.title}</h3>
-                <p className="mt-4 max-w-xl text-sm leading-7 text-[var(--color-muted)] sm:text-base">{activeCategory.description}</p>
-                <div className="mt-6 flex flex-wrap gap-3">
-                  <LuxuryButton href={activeCategory.href} tone="dark">
-                    Browse category
-                  </LuxuryButton>
-                  <LuxuryButton href="/collection" tone="light">
-                    View all bags
-                  </LuxuryButton>
-                </div>
-              </div>
-            </div>
+            <SectionLabel
+              eyebrow="Shop by category"
+              title="Browse handbags by shape, mood, and everyday use."
+              description="This interactive section keeps tote, shoulder, hobo, and mini language visible while directing shoppers deeper into the catalog."
+            />
           </Reveal>
 
-          <div className="grid gap-5 md:grid-cols-2">
-            {activeCategoryProducts.slice(0, 2).map((product, index) => (
-              <Reveal key={product.id} delay={index * 0.07}>
-                <LuxuryProductCard product={product} onQuickView={setQuickViewId} compact />
+          <div className="mt-10 grid gap-6 lg:grid-cols-[0.92fr_1.08fr]">
+            <Reveal>
+              <div className="rounded-[2.25rem] border border-[rgba(32,26,21,0.08)] bg-[rgba(255,250,241,0.9)] p-6 shadow-[0_24px_70px_rgba(61,47,28,0.08)] sm:p-8 lg:p-10">
+                <div className="flex flex-wrap gap-2">
+                  {categoryShowcases.map((cat) => {
+                    const isActive = cat.id === activeCategory?.id;
+                    return (
+                      <button
+                        key={cat.id}
+                        type="button"
+                        onClick={() => setActiveCategoryId(cat.id)}
+                        aria-pressed={isActive}
+                        className={`rounded-full border px-4 py-2 text-[0.68rem] font-semibold uppercase tracking-[0.28em] transition duration-300 ${
+                          isActive
+                            ? "border-[var(--color-primary)] bg-[var(--color-primary)] text-white shadow-[0_12px_26px_rgba(155,122,67,0.22)]"
+                            : "border-[rgba(32,26,21,0.1)] bg-white/60 text-[var(--color-muted)] hover:border-[rgba(155,122,67,0.45)] hover:text-[var(--foreground)]"
+                        }`}
+                      >
+                        {cat.label}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {activeCategory && (
+                  <div className="mt-8">
+                    <p className="text-[0.72rem] font-semibold uppercase tracking-[0.36em] text-[var(--color-primary)]">{activeCategory.eyebrow}</p>
+                    <h3 className="mt-4 font-serif text-3xl text-[var(--foreground)] sm:text-4xl">{activeCategory.title}</h3>
+                    <p className="mt-4 max-w-xl text-sm leading-7 text-[var(--color-muted)] sm:text-base">{activeCategory.description}</p>
+                    <div className="mt-6 flex flex-wrap gap-3">
+                      <LuxuryButton href={activeCategory.href} tone="dark">Browse category</LuxuryButton>
+                      <LuxuryButton href="/collection" tone="light">View all bags</LuxuryButton>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </Reveal>
+
+            <div className="grid gap-5 md:grid-cols-2">
+              {activeCategoryProducts.slice(0, 2).map((product, index) => (
+                <Reveal key={product.id} delay={index * 0.07}>
+                  <LuxuryProductCard product={product} onQuickView={setQuickViewId} compact />
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ── Collections ── (only rendered when DB has active collections) */}
+      {collections.length > 0 && (
+        <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
+          <Reveal>
+            <SectionLabel
+              eyebrow="Curated collections"
+              title="Handpicked edits crafted around a single mood or moment."
+              description="Each collection is a tightly curated selection of pieces that work together — shop the full edit or explore individual styles."
+            />
+          </Reveal>
+
+          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {collections.map((col, index) => (
+              <Reveal key={col.id} delay={index * 0.07}>
+                <Link
+                  href={`/collection?set=${encodeURIComponent(col.slug)}`}
+                  className="group block overflow-hidden rounded-[1.75rem] border border-[rgba(155,122,67,0.14)] bg-[rgba(255,250,241,0.94)] shadow-[0_24px_60px_rgba(61,47,28,0.08)] transition duration-300 hover:border-[rgba(155,122,67,0.28)] hover:shadow-[0_32px_70px_rgba(61,47,28,0.12)]"
+                >
+                  {col.cover_image ? (
+                    <div className="relative aspect-[4/3] overflow-hidden bg-[#f3ede1]">
+                      <Image
+                        src={col.cover_image}
+                        alt={col.name}
+                        fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        className="object-cover transition duration-700 ease-out group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/0 to-transparent" />
+                      {col.badge_text && (
+                        <div className="absolute left-4 top-4 rounded-full border border-white/30 bg-[rgba(155,122,67,0.82)] px-3 py-1 text-[0.64rem] font-semibold uppercase tracking-[0.26em] text-white backdrop-blur-md">
+                          {col.badge_text}
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="relative aspect-[4/3] overflow-hidden rounded-t-[1.75rem] bg-[rgba(155,122,67,0.08)]">
+                      {col.badge_text && (
+                        <div className="absolute left-4 top-4 rounded-full border border-[rgba(155,122,67,0.3)] bg-[rgba(155,122,67,0.12)] px-3 py-1 text-[0.64rem] font-semibold uppercase tracking-[0.26em] text-primary">
+                          {col.badge_text}
+                        </div>
+                      )}
+                      <div className="flex h-full items-center justify-center">
+                        <svg width="48" height="48" fill="none" stroke="currentColor" strokeWidth="1" viewBox="0 0 48 48" className="text-[rgba(155,122,67,0.25)]">
+                          <rect x="6" y="6" width="16" height="16" rx="3" />
+                          <rect x="26" y="6" width="16" height="16" rx="3" />
+                          <rect x="6" y="26" width="16" height="16" rx="3" />
+                          <rect x="26" y="26" width="16" height="16" rx="3" />
+                        </svg>
+                      </div>
+                    </div>
+                  )}
+                  <div className="p-5">
+                    <h3 className="font-serif text-xl text-[var(--foreground)] transition duration-300 group-hover:text-[var(--color-primary)]">
+                      {col.name}
+                    </h3>
+                    {col.tagline && (
+                      <p className="mt-2 text-sm leading-6 text-[var(--color-muted)]">{col.tagline}</p>
+                    )}
+                    <div className="mt-4 inline-flex items-center gap-1.5 text-[0.72rem] font-semibold uppercase tracking-[0.26em] text-[var(--color-primary)]">
+                      Shop edit
+                      <span className="transition duration-300 group-hover:translate-x-1">→</span>
+                    </div>
+                  </div>
+                </Link>
               </Reveal>
             ))}
           </div>
-        </div>
-      </section>
+        </section>
+      )}
+
+      {/* ── Trending ── */}
       <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
         <Reveal>
           <SectionLabel
@@ -463,6 +550,7 @@ export default function PremiumHomePage() {
         </div>
       </section>
 
+      {/* ── Why choose us ── */}
       <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
         <Reveal>
           <SectionLabel
@@ -487,6 +575,7 @@ export default function PremiumHomePage() {
         </div>
       </section>
 
+      {/* ── Social proof ── */}
       <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
         <Reveal>
           <SectionLabel
@@ -506,9 +595,7 @@ export default function PremiumHomePage() {
               </div>
               <div className="mt-6 flex gap-1 text-[var(--color-primary)]">
                 {Array.from({ length: 5 }).map((_, index) => (
-                  <span key={index} className="text-xl">
-                    ★
-                  </span>
+                  <span key={index} className="text-xl">★</span>
                 ))}
               </div>
               <div className="mt-8 space-y-4">
@@ -530,7 +617,7 @@ export default function PremiumHomePage() {
             {testimonials.map((testimonial, index) => (
               <Reveal key={testimonial.name} delay={index * 0.08}>
                 <div className="h-full rounded-[1.75rem] border border-[rgba(32,26,21,0.08)] bg-[rgba(255,250,241,0.88)] p-6 shadow-[0_18px_40px_rgba(61,47,28,0.08)]">
-                  <p className="text-3xl leading-none text-[var(--color-primary)]">“</p>
+                  <p className="text-3xl leading-none text-[var(--color-primary)]">&ldquo;</p>
                   <p className="mt-4 text-sm leading-7 text-[var(--foreground)]">{testimonial.quote}</p>
                   <div className="mt-8 border-t border-[rgba(32,26,21,0.08)] pt-4">
                     <div className="font-serif text-lg text-[var(--foreground)]">{testimonial.name}</div>
@@ -543,6 +630,7 @@ export default function PremiumHomePage() {
         </div>
       </section>
 
+      {/* ── Editorial banners ── */}
       <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
         <Reveal>
           <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
@@ -565,9 +653,7 @@ export default function PremiumHomePage() {
                     <h4 className="font-serif text-2xl text-[var(--foreground)]">Polished on arrival</h4>
                     <p className="mt-2 text-sm leading-7 text-[var(--color-muted)]">Premium packaging and a refined unboxing feel.</p>
                   </div>
-                  <LuxuryButton href="/collection" tone="light">
-                    Discover
-                  </LuxuryButton>
+                  <LuxuryButton href="/collection" tone="light">Discover</LuxuryButton>
                 </div>
               </div>
 
@@ -581,6 +667,7 @@ export default function PremiumHomePage() {
         </Reveal>
       </section>
 
+      {/* ── Newsletter ── */}
       <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
         <Reveal>
           <div className="rounded-[2.25rem] border border-[rgba(32,26,21,0.08)] bg-[rgba(255,250,241,0.9)] p-6 shadow-[0_24px_70px_rgba(61,47,28,0.08)] sm:p-8 lg:p-10">
@@ -593,20 +680,26 @@ export default function PremiumHomePage() {
                 </p>
               </div>
 
-              <form className="grid gap-3 sm:grid-cols-[1fr_auto]" onSubmit={(event) => event.preventDefault()}>
-                <input
-                  type="email"
-                  required
-                  placeholder="Enter your email"
-                  className="h-14 rounded-full border border-[rgba(32,26,21,0.12)] bg-white px-5 text-sm text-[var(--foreground)] outline-none transition placeholder:text-[var(--color-muted)] focus:border-[rgba(155,122,67,0.5)]"
-                />
+              <form className="grid gap-3 sm:grid-cols-[1fr_auto]" onSubmit={(event) => event.preventDefault()} aria-label="Newsletter signup">
+                <div className="flex flex-col gap-1.5">
+                  <label htmlFor="newsletter-email" className="sr-only">Email address</label>
+                  <input
+                    id="newsletter-email"
+                    name="email"
+                    type="email"
+                    required
+                    autoComplete="email"
+                    placeholder="Enter your email"
+                    className="h-14 rounded-full border border-[rgba(32,26,21,0.12)] bg-white px-5 text-sm text-[var(--foreground)] outline-none transition placeholder:text-[var(--color-muted)] focus:border-[rgba(155,122,67,0.5)] focus:ring-2 focus:ring-[rgba(155,122,67,0.12)]"
+                  />
+                </div>
                 <button
                   type="submit"
-                  className="h-14 rounded-full bg-[var(--foreground)] px-7 text-sm font-medium tracking-[0.14em] uppercase text-white transition hover:bg-[#342a21]"
+                  className="h-14 cursor-pointer rounded-full bg-[var(--foreground)] px-7 text-sm font-medium uppercase tracking-[0.14em] text-white transition hover:bg-[#342a21]"
                 >
                   Subscribe
                 </button>
-                <p className="sm:col-span-2 text-xs leading-6 text-[var(--color-muted)]">
+                <p className="text-xs leading-6 text-[var(--color-muted)] sm:col-span-2">
                   No spam. Only product drops, edit notes, and early access to new arrivals.
                 </p>
               </form>
@@ -615,6 +708,7 @@ export default function PremiumHomePage() {
         </Reveal>
       </section>
 
+      {/* ── Footer ── */}
       <footer className="border-t border-[rgba(155,122,67,0.14)] bg-[rgba(255,250,241,0.6)]">
         <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-16">
           <div className="grid gap-10 lg:grid-cols-[1.2fr_0.8fr_0.8fr_0.8fr]">

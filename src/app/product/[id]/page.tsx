@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import BreadcrumbsNav from "../../../components/BreadcrumbsNav";
 import ProductDetailClient from "../../../components/ProductDetailClient";
-import { getProductById, products } from "../../../data/products";
+import { getProductById, getProductIds } from "@/lib/db";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -15,12 +15,13 @@ function absoluteUrl(pathname: string) {
 }
 
 export async function generateStaticParams() {
-  return products.map((product) => ({ id: product.id }));
+  const ids = await getProductIds();
+  return ids.map((id) => ({ id }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
-  const product = getProductById(id);
+  const product = await getProductById(id);
 
   if (!product) {
     return {
@@ -30,28 +31,22 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   const pageTitle = `${product.name} Handbag`;
-  const pageDescription = product.description;
 
   return {
     title: pageTitle,
-    description: pageDescription,
-    alternates: {
-      canonical: `/product/${product.slug}`,
-    },
+    description: product.description,
+    alternates: { canonical: `/product/${product.slug}` },
     openGraph: {
       type: "website",
       title: pageTitle,
-      description: pageDescription,
+      description: product.description,
       url: absoluteUrl(`/product/${product.slug}`),
-      images: product.images.map((image) => ({
-        url: absoluteUrl(image),
-        alt: product.name,
-      })),
+      images: product.images.map((image) => ({ url: absoluteUrl(image), alt: product.name })),
     },
     twitter: {
       card: "summary_large_image",
       title: pageTitle,
-      description: pageDescription,
+      description: product.description,
       images: [absoluteUrl(product.images[0])],
     },
     other: {
@@ -64,11 +59,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ProductPage({ params }: Props) {
   const { id } = await params;
-  const product = getProductById(id);
+  const product = await getProductById(id);
 
-  if (!product) {
-    notFound();
-  }
+  if (!product) notFound();
 
   const schema = {
     "@context": "https://schema.org",
@@ -78,10 +71,7 @@ export default async function ProductPage({ params }: Props) {
     image: product.images.map((image) => absoluteUrl(image)),
     sku: product.id,
     category: product.category,
-    brand: {
-      "@type": "Brand",
-      name: "Pursethetic",
-    },
+    brand: { "@type": "Brand", name: "Pursethetic" },
     offers: {
       "@type": "Offer",
       priceCurrency: "PKR",
